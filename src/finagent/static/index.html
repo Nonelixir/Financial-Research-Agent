@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>可信财报研究室</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22><rect width=%2264%22 height=%2264%22 rx=%2214%22 fill=%22%23087f6d%22/><path d=%22M16 44V20h8v24zm12 0V29h8v15zm12 0V14h8v30z%22 fill=%22white%22/></svg>" />
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <header>
+      <div>
+        <p class="eyebrow">SEC 财报 · 全程可溯源</p>
+        <h1>可信财报研究室</h1>
+      </div>
+      <div class="header-meta">
+        <span class="local-badge">本地研究工作台</span>
+        <span id="health">正在连接…</span>
+      </div>
+    </header>
+    <main>
+      <aside class="scope-panel">
+        <h2>研究范围</h2>
+        <label>搜索公司</label>
+        <div class="search-row">
+          <input id="company-query" placeholder="股票代码或公司名称" />
+          <button id="company-search">搜索</button>
+        </div>
+        <div id="company-results" class="results"></div>
+        <div id="selected-companies" class="selected"></div>
+        <label for="years">财年</label>
+        <input id="years" value="2025,2024,2023" />
+        <label>表单</label>
+        <div class="checks">
+          <label><input type="checkbox" value="10-K" checked />10-K</label>
+          <label><input type="checkbox" value="10-Q" checked />10-Q</label>
+        </div>
+        <button id="compare" class="secondary">生成可信对比表</button>
+        <button id="export" class="ghost">导出 XLSX</button>
+      </aside>
+      <section class="workspace">
+        <div class="run-header">
+          <div>
+            <p class="eyebrow">研究任务</p>
+            <h2 id="run-title">等待研究任务</h2>
+          </div>
+          <div id="source-summary" class="source-summary">尚未检索来源</div>
+        </div>
+        <div id="status-track" class="status-track">
+          <div class="status-step" data-phase="ingestion"><i>1</i><span>SEC 数据</span><small>等待</small></div>
+          <div class="status-step" data-phase="retrieval"><i>2</i><span>证据检索</span><small>等待</small></div>
+          <div class="status-step" data-phase="verification"><i>3</i><span>数值核验</span><small>等待</small></div>
+          <div class="status-step" data-phase="generation"><i>4</i><span>生成回答</span><small>等待</small></div>
+        </div>
+        <div id="live-status" class="live-status" aria-live="polite">
+          <span class="status-dot"></span><span>选择公司并开始研究</span>
+        </div>
+        <div id="answer" class="answer empty">
+          <p>选择公司后，可询问收入、利润率、风险、战略及跨期变化。</p>
+        </div>
+        <div class="composer">
+          <textarea id="question" rows="3" placeholder="例如：分析近三年收入和盈利能力变化"></textarea>
+          <div class="composer-actions">
+            <button id="stop" class="stop" hidden>停止</button>
+            <button id="ask">开始研究</button>
+          </div>
+        </div>
+        <div id="table-wrap"></div>
+      </section>
+      <aside id="source-panel" class="source-panel">
+        <h2>来源核验</h2>
+        <p>点击回答中的引用查看 SEC 定位信息和原文。</p>
+      </aside>
+    </main>
+    <script src="/static/app.js" type="module"></script>
+  </body>
+</html>

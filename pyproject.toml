@@ -1,0 +1,47 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "fin-research-agent"
+version = "0.1.0"
+description = "A lightweight provenance-first SEC financial research agent"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+  "anyio==4.12.1",
+  "click==8.3.1",
+  "fastapi==0.136.1",
+  "httpx==0.28.1",
+  "httpcore==1.0.9",
+  "openpyxl==3.1.5",
+  "pydantic==2.12.5",
+  "pydantic-settings==2.12.0",
+  "starlette==1.3.1",
+  "uvicorn==0.40.0",
+]
+
+[project.optional-dependencies]
+agent = ["pydantic-ai-slim[openai]==1.107.7"]
+dev = [
+  "pygments==2.19.2",
+  "pytest==9.0.2",
+  "ruff==0.14.11",
+]
+
+[project.scripts]
+finagent = "finagent.api:run"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/finagent"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+ignore = ["RUF001"]

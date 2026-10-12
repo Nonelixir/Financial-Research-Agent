@@ -1,0 +1,223 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "财报研究 Agent · 当前架构",
+    "locale": "zh-CN",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1360,
+      780
+    ]
+  },
+  "components": [
+    {
+      "id": "chat-workbench",
+      "type": "frontend",
+      "label": "对话工作台",
+      "sublabel": "React · assistant-ui · AI Elements",
+      "pos": [
+        60,
+        340
+      ],
+      "size": [
+        230,
+        80
+      ]
+    },
+    {
+      "id": "session-api",
+      "type": "backend",
+      "label": "API 与会话",
+      "sublabel": "FastAPI · SSE · 历史上下文",
+      "pos": [
+        410,
+        340
+      ],
+      "size": [
+        220,
+        80
+      ]
+    },
+    {
+      "id": "research-runtime",
+      "type": "backend",
+      "label": "自主研究循环",
+      "sublabel": "Pydantic AI · 动态证据集合",
+      "pos": [
+        760,
+        340
+      ],
+      "size": [
+        220,
+        80
+      ]
+    },
+    {
+      "id": "model-endpoint",
+      "type": "external",
+      "label": "兼容模型端点",
+      "sublabel": "Responses / Chat Completions",
+      "pos": [
+        1110,
+        340
+      ],
+      "size": [
+        220,
+        80
+      ]
+    },
+    {
+      "id": "sqlite-state",
+      "type": "database",
+      "label": "SQLite 持久化",
+      "sublabel": "会话 · 引用 · 快照 · FTS5",
+      "pos": [
+        410,
+        100
+      ],
+      "size": [
+        220,
+        80
+      ]
+    },
+    {
+      "id": "research-tools",
+      "type": "backend",
+      "label": "按需研究工具",
+      "sublabel": "目录 · 检索 · 指标 · 公式复算",
+      "pos": [
+        760,
+        100
+      ],
+      "size": [
+        220,
+        80
+      ]
+    },
+    {
+      "id": "public-evidence",
+      "type": "external",
+      "label": "公开证据",
+      "sublabel": "SEC · 公共 HTTPS · 搜索线索",
+      "pos": [
+        1110,
+        100
+      ],
+      "size": [
+        220,
+        80
+      ]
+    },
+    {
+      "id": "session-files",
+      "type": "database",
+      "label": "会话文件与产物",
+      "sublabel": "受限平面目录 · 显式发布",
+      "pos": [
+        410,
+        590
+      ],
+      "size": [
+        220,
+        80
+      ]
+    },
+    {
+      "id": "publication-checks",
+      "type": "security",
+      "label": "发布校验",
+      "sublabel": "引用 · 数值 · 公式 · 文件门槛",
+      "pos": [
+        760,
+        590
+      ],
+      "size": [
+        220,
+        80
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "from": "chat-workbench",
+      "to": "session-api",
+      "label": "HTTP / SSE",
+      "variant": "emphasis"
+    },
+    {
+      "from": "session-api",
+      "to": "research-runtime",
+      "label": "问题与历史",
+      "variant": "emphasis"
+    },
+    {
+      "from": "research-runtime",
+      "to": "model-endpoint",
+      "label": "模型与工具调用",
+      "variant": "emphasis"
+    },
+    {
+      "from": "session-api",
+      "to": "sqlite-state",
+      "label": "会话读写"
+    },
+    {
+      "from": "research-runtime",
+      "to": "research-tools",
+      "label": "自主选用工具"
+    },
+    {
+      "from": "research-tools",
+      "to": "public-evidence",
+      "label": "按需获取"
+    },
+    {
+      "from": "research-tools",
+      "to": "sqlite-state",
+      "label": "索引与证据"
+    },
+    {
+      "from": "research-runtime",
+      "to": "publication-checks",
+      "label": "验证完整段落",
+      "variant": "security",
+      "labelDy": 55
+    },
+    {
+      "from": "publication-checks",
+      "to": "session-files",
+      "label": "文件交付门槛",
+      "variant": "security"
+    },
+    {
+      "from": "session-api",
+      "to": "session-files",
+      "label": "保存与下载",
+      "labelDy": 55
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "轻量运行",
+      "items": [
+        "一个 Python 服务提供界面和 API；无独立 Worker、向量库或 Redis。"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "来源保留",
+      "items": [
+        "原文摘录、XBRL 定位和派生输入链保留；字面支持不等于语义证明。"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "明确边界",
+      "items": [
+        "Python / shell 不可执行；期间语义、重试与重复恢复仍存在缺陷。"
+      ]
+    }
+  ]
+}

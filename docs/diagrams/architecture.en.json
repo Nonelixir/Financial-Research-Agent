@@ -1,0 +1,223 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Financial Research Agent · Current architecture",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1360,
+      780
+    ]
+  },
+  "components": [
+    {
+      "id": "chat-workbench",
+      "type": "frontend",
+      "label": "Chat workbench",
+      "sublabel": "React · assistant-ui · AI Elements",
+      "pos": [
+        60,
+        340
+      ],
+      "size": [
+        230,
+        80
+      ]
+    },
+    {
+      "id": "session-api",
+      "type": "backend",
+      "label": "API and sessions",
+      "sublabel": "FastAPI · SSE · conversation context",
+      "pos": [
+        410,
+        340
+      ],
+      "size": [
+        220,
+        80
+      ]
+    },
+    {
+      "id": "research-runtime",
+      "type": "backend",
+      "label": "Autonomous research",
+      "sublabel": "Pydantic AI · dynamic evidence",
+      "pos": [
+        760,
+        340
+      ],
+      "size": [
+        220,
+        80
+      ]
+    },
+    {
+      "id": "model-endpoint",
+      "type": "external",
+      "label": "Compatible model API",
+      "sublabel": "Responses / Chat Completions",
+      "pos": [
+        1110,
+        340
+      ],
+      "size": [
+        220,
+        80
+      ]
+    },
+    {
+      "id": "sqlite-state",
+      "type": "database",
+      "label": "SQLite persistence",
+      "sublabel": "Sessions · citations · snapshots · FTS5",
+      "pos": [
+        410,
+        100
+      ],
+      "size": [
+        220,
+        80
+      ]
+    },
+    {
+      "id": "research-tools",
+      "type": "backend",
+      "label": "On-demand tools",
+      "sublabel": "Filings · search · facts · computation",
+      "pos": [
+        760,
+        100
+      ],
+      "size": [
+        220,
+        80
+      ]
+    },
+    {
+      "id": "public-evidence",
+      "type": "external",
+      "label": "Public evidence",
+      "sublabel": "SEC · public HTTPS · search leads",
+      "pos": [
+        1110,
+        100
+      ],
+      "size": [
+        220,
+        80
+      ]
+    },
+    {
+      "id": "session-files",
+      "type": "database",
+      "label": "Session files and artifacts",
+      "sublabel": "Flat files · explicit publishing",
+      "pos": [
+        410,
+        590
+      ],
+      "size": [
+        220,
+        80
+      ]
+    },
+    {
+      "id": "publication-checks",
+      "type": "security",
+      "label": "Publication checks",
+      "sublabel": "Citations · numbers · formulas · files",
+      "pos": [
+        760,
+        590
+      ],
+      "size": [
+        220,
+        80
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "from": "chat-workbench",
+      "to": "session-api",
+      "label": "HTTP / SSE",
+      "variant": "emphasis"
+    },
+    {
+      "from": "session-api",
+      "to": "research-runtime",
+      "label": "Question and history",
+      "variant": "emphasis"
+    },
+    {
+      "from": "research-runtime",
+      "to": "model-endpoint",
+      "label": "Model and tool calls",
+      "variant": "emphasis"
+    },
+    {
+      "from": "session-api",
+      "to": "sqlite-state",
+      "label": "Session read / write"
+    },
+    {
+      "from": "research-runtime",
+      "to": "research-tools",
+      "label": "Select tools"
+    },
+    {
+      "from": "research-tools",
+      "to": "public-evidence",
+      "label": "Fetch on demand"
+    },
+    {
+      "from": "research-tools",
+      "to": "sqlite-state",
+      "label": "Index and evidence"
+    },
+    {
+      "from": "research-runtime",
+      "to": "publication-checks",
+      "label": "Check closed claims",
+      "variant": "security",
+      "labelDy": 55
+    },
+    {
+      "from": "publication-checks",
+      "to": "session-files",
+      "label": "File delivery gate",
+      "variant": "security"
+    },
+    {
+      "from": "session-api",
+      "to": "session-files",
+      "label": "Save / download",
+      "labelDy": 55
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Lightweight runtime",
+      "items": [
+        "One Python service serves UI and API; no worker, vector store or Redis."
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Provenance retained",
+      "items": [
+        "Original quotes, XBRL locators and derived input chains; literal support is not semantic proof."
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Explicit limits",
+      "items": [
+        "Python / shell disabled; period semantics, retries and duplicate recovery remain imperfect."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+AI Elements source components
+Copyright 2023 Vercel, Inc.
+Upstream: https://github.com/vercel/ai-elements
+License: Apache License, Version 2.0; see Apache-2.0.txt.
+
+Modified files: frontend/src/components/ai-elements/tool.tsx and artifact.tsx.
+Local modifications include import paths, UI integration and localization.
+This notice applies to those upstream-derived components, not to a license
+grant for the entire Financial Research Agent project.
