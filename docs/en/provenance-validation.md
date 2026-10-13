@@ -2,7 +2,7 @@
 
 [中文](../zh-CN/provenance-validation.md) · [README](../../README.en.md)
 
-Verified against current implementation: 2026-10-12.
+Verified against current implementation: 2026-10-13.
 
 ## Data model and assurance levels
 
@@ -28,12 +28,12 @@ Locator is XBRL concept/unit/start/end/fy/fp/frame/dimensions, text section/inde
 3. Derived citations recursively replay and compare recorded inputs/results.
 4. A binding text must occur exactly in the Claim, and its citation must belong to that Claim.
 5. Numeric bindings compare scaled/rounded amounts. Signed keeps the sign; positive outflow/loss magnitudes require negative evidence and explicit local wording.
-6. Narrative bindings check digits only. Narrative outflow/loss bindings currently fail; no ValueRef is invented.
+6. Narrative bindings check literal digits. Outflow/loss also requires a negative literal (minus sign or accounting parentheses) in the same quote and local outflow/loss wording in the answer. No ValueRef is created; table row/column identity is not proved.
 7. Paragraph currency checks still compare values; verified single-source bindings are not re-signed by fuzzy context. Mixed text/derived claims can retain literal number+scale support.
 8. Percentages/days require reported digits or matching-unit derived evidence. Percentage points are not percent.
 9. Without numeric evidence, substantive digits need quote support; dates, registered identifiers, forms and list labels receive bounded exclusions.
 
-MONEY handles USD/$/Chinese currency and scales, some negative signs/accounting parentheses; arithmetic parentheses and m shorthand can still fail.
+MONEY handles USD/$/Chinese currency and scales plus m/b/k/bn abbreviations. Accounting parentheses must enclose a complete single amount; formula grouping does not change an amount’s sign.
 Changed spans, wrong presentations and mismatched citations can exhaust two retries. Closed-claim verification is not comprehensive semantic proof.
 
 ## Tables and files

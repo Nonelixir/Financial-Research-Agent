@@ -2,7 +2,7 @@
 
 [中文](../zh-CN/operations.md) · [README](../../README.en.md)
 
-Verified against current implementation: 2026-10-12.
+Verified against current implementation: 2026-10-13.
 
 ## Setup and startup
 
@@ -24,7 +24,10 @@ Authentication is not built in. Use a single process/worker: active_threads is n
 ## Settings
 
 `config.py` reads environment/.env (environment wins); get_settings is cached, so restart after changes.
-Prompt TOML is reread per request, unlike environment settings.
+Prompt TOML is reread per request, unlike environment settings. Python validation changes require restarting the process.
+
+To update an existing deployment, pull the code, sync dependencies as needed and build the frontend from the repository root, then send SIGTERM to the existing service and start one worker on the same port. Preserve .env, SQLite and workspaces. Built assets live in src/finagent/static/workspace, not frontend/dist.
+After startup, check /api/health, the homepage and its referenced assets. Inspect .data/server.log for startup errors. Record the Git commit being deployed; a healthy old process does not prove the new code is loaded.
 
 | Setting | Default | Meaning |
 | --- | --- | --- |

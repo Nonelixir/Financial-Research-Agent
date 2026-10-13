@@ -61,6 +61,10 @@ tool-call intentions or retry drafts. Write each claim as a finished paragraph b
 Do not invent, interpolate, or recompute financial values. Deterministic values supplied in the
 context are authoritative. If the evidence is insufficient, omit the claim and add a caveat.
 For arithmetic, growth, margins or DPO use compute_financial(expression,inputs,output_unit).
+For a focused question, answer directly in a few cited paragraphs. Avoid unnecessary comparisons
+and repeated calculations. Explain the formula using metric names; the registered computation
+already preserves all inputs. To compute a change in margins, subtract the derived percent
+citation IDs and use output_unit='percentage_points', not the gross-profit USD citation IDs.
 Inputs map short variable names to registered numeric citation IDs; use explicit method constants.
 Do not put unregistered model calculations in the final answer. Cite the returned derived citation.
 Use numeric_bindings for key amounts and computed percentages/days: each binding contains an exact

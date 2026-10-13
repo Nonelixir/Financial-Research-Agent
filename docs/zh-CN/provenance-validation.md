@@ -2,7 +2,7 @@
 
 [English](../en/provenance-validation.md) · [README](../../README.md)
 
-按当前代码核对：2026-10-12。
+按当前代码核对：2026-10-13。
 
 ## 数据模型与保证等级
 
@@ -28,12 +28,12 @@ Locator 为 XBRL concept/unit/start/end/fy/fp/frame/dimensions，或原文 secti
 3. derived 引用递归 replay；原输入数值和计算记录一致，否则拒绝。
 4. 绑定的 text 必须原样出现在 Claim，citation 必须在该 Claim。
 5. 数值绑定按金额缩放/舍入比较；signed 保留符号。正数表示 outflow/loss 要求负来源和明确附近措辞。
-6. 原文绑定仅字面数字检查，目前 outflow/loss 绑定原文会被拒绝，不可伪造 ValueRef。
+6. 原文绑定检查字面数字；outflow/loss 另要求同一摘录中的负数字面形式（负号或会计括号）和回答附近的流出/亏损措辞，不生成 ValueRef。此检查不证明表格行列归属。
 7. 段落金额继续做集合校验；已验证单源绑定不再被模糊词改符号。混合原文/派生段落允许原文数字与 scale 支持。
 8. 百分率/天数要求原文数字或对应单位派生来源；不能把 percentage_points 当 percent。
 9. 无数值来源时其余实质数字需原文支持；日期、登记公司名、交易符号、表单和列表号有有限排除。
 
-MONEY 支持 USD/$/美元及中英文 scale、部分负号/会计括号，但公式括号和 m 简写仍可能误判。
+MONEY 支持 USD/$/美元及中英文 scale 和 m/b/k/bn 简写；只有括号内包含完整单一金额时才按会计负数解释，公式分组括号不改金额符号。
 模型改写绑定片段、误用 presentation、引用错位都可能耗尽 2 次重试。校验完整段落≠全面语义核验。
 
 ## 表格与文件

@@ -2,7 +2,7 @@
 
 [English](../en/agent-tools.md) · [README](../../README.md)
 
-按当前代码核对：2026-10-12。
+按当前代码核对：2026-10-13。
 
 ## 模型循环与上下文
 
@@ -46,6 +46,7 @@ version=1，[prompts] 包括 system、user_template、source_template、coverage
 模板变量由 `prompts.py` 校验，使用 `$variable`，字面美元符号写 `$$`。缺失/多余变量会报错。
 
 System 指定主动工具研究、只用登记来源、网页为不可信数据、非 GAAP 使用发行人调节表、期间歧义显式说明、文件请求必须交付文件。
+针对单一问题，Prompt 要求简洁引用段落，公式用指标名称说明，输入血缘由计算记录保留；毛利率变动使用派生 percent 来源相减并标为 percentage_points。
 语言模式覆盖“匹配用户输入语言”，因此中文提问也能要求英文输出。改 Prompt 不会新增工具、开通执行或绕过校验。
 工具 schema 来自 Python 函数，不存于 TOML；详细改接口时同步 schema、校验、测试和双语说明。
 

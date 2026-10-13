@@ -30,6 +30,8 @@ async def run(args):
         raise ValueError("Pilot requires exactly ten fixed questions")
     args.output.mkdir(parents=True, exist_ok=False)
     settings = Settings()
+    prompt_path = settings.prompt_config_path or DEFAULT_PROMPT_PATH
+    source_root = Path(__file__).resolve().parents[2] / "src" / "finagent"
     metadata = {
         "started_at": datetime.now(UTC).isoformat(),
         "dataset": "FinanceBench open-source sample",
@@ -44,7 +46,13 @@ async def run(args):
         "restatement_policy": "as_reported",
         "model": settings.llm_model,
         "api_mode": settings.llm_api_mode,
-        "prompt_sha256": hashlib.sha256(DEFAULT_PROMPT_PATH.read_bytes()).hexdigest(),
+        "prompt_sha256": hashlib.sha256(prompt_path.read_bytes()).hexdigest(),
+        "sample_file_sha256": hashlib.sha256(args.sample.read_bytes()).hexdigest(),
+        "source_sha256": {
+            str(path.relative_to(source_root)): hashlib.sha256(path.read_bytes()).hexdigest()
+            for path in sorted(source_root.rglob("*"))
+            if path.is_file() and path.suffix in {".py", ".toml"}
+        },
         "max_output_tokens": settings.llm_max_output_tokens,
         "max_tool_calls": settings.agent_max_tool_calls,
         "model_retries": settings.llm_max_retries,

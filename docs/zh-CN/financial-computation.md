@@ -2,7 +2,7 @@
 
 [English](../en/financial-computation.md) · [README](../../README.md)
 
-按当前代码核对：2026-10-12。
+按当前代码核对：2026-10-13。
 
 ## 指标与口径
 
@@ -50,6 +50,8 @@ margin: profit/revenue*100 → percent
 margin delta: current_margin-prior_margin → percentage_points
 DPO: 365*((ap_prior+ap_current)/2)/(cogs+inventory_current-inventory_prior) → days
 ```
+
+毛利率变动的 inputs 应使用先前返回的 percent 派生引用，不可把 USD 毛利润直接相减后标为 percentage_points。回答可用指标名称解释公式，具体输入 ID、值与单位由 computations 记录保留，避免重复抄写数值。
 
 这些是方法示例，不证明特定行业口径正确。输入必须是原 XBRL 数值或已注册派生值；原文摘录不能直接推断 ValueRef。
 记录保存表达式、输入 ID/值/单位、结果、精度、verification；发布前递归回查/replay，检测输入/结果变更。

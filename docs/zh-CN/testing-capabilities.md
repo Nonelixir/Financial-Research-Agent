@@ -2,7 +2,7 @@
 
 [English](../en/testing-capabilities.md) · [README](../../README.md)
 
-按当前代码核对：2026-10-12。
+按当前代码核对：2026-10-13。
 
 ## 当前能力分级
 
@@ -24,7 +24,7 @@
 
 - 财年与目标公告年标存在歧义，缺少确定性的 target-period gate；可引用真实的错误年度。
 - HTML 表格未结构化行列/单位提取，原文数字仅字面支持。
-- 金额正则对公式括号、m 简写等有误杀；原文 outflow 绑定与数值绑定契约不一致。
+- 金额解析已区分公式与会计括号并支持 m/b/k/bn；原文流出绑定仍只检查负数字面和附近措辞，未证明行列/指标归属，叙述性亏损可能仍需重试。
 - 模型误抄 ID/绑定片段、误选指标、错误单位仍可能造成重试耗尽。
 - 已发布前缀冻结与重试改写冲突；recoverable 可恢复语义重复段落。
 - 样本覆盖/行业成员语义、扩展断言因果未独立证明。
@@ -42,7 +42,7 @@ uv run ruff check src tests eval/runners/financebench_pilot.py
 npm --prefix frontend run build
 ```
 
-当前基线 87 项 pytest；覆盖事实/差分/核验、引用、模拟流式/重试、文件限制、语言、SEC mock、公式不安全 AST、输入/结果篡改、scope 等。
+当前 89 项 pytest；覆盖事实/差分/核验、引用、模拟流式/重试、文件限制、语言、SEC mock、公式不安全 AST、输入/结果篡改、scope 等。
 测试数量随代码变化；记录实际运行，不以此代替真实模型效果。构建只证明编译，不证明浏览器操作正确。
 
 ## 现有评测方法
@@ -53,7 +53,7 @@ npm --prefix frontend run build
 真实 HTTP runner 创建会话，问题+目标文档名输入，金标/evidence 留在评测侧，不预注入正确数据。
 每题 180 秒客户端预算、两题并行、开放公司/年份、as_reported、英文；服务总预算独立。
 同模型 gpt-5.6-luna、Responses、普通 4000 tokens、60 工具、2 重试；线上来源与混合暖缓存。
-输出 metadata、gold、逐题事件/回答/来源/持久化线程、results.jsonl；复核 review.json 保留。
+输出 metadata（含题集文件与源代码 SHA256）、gold、逐题事件/回答/来源/持久化线程、results.jsonl；复核 review.json 保留。
 当前 API 没有 token/cost 数据，不填写 0；judge 的数字/引用 accession 比较不能代替文本蕴含评审。
 
 ```bash
@@ -68,8 +68,10 @@ uv run python eval/runners/financebench_pilot.py \
 ## 当前可引用结论
 
 已保留原始 baseline/v2/v3/v4 数据；失效启动记录另有 metadata 标志，不纳入准确率。
-baseline 与当前 v4 完整核心正确均 6/10；v4 平均 44.85 秒、baseline 70.39 秒。
-v4 两题有正确部分但 incomplete，一题空回答未完成，一题错误期间；complete 为 7/10，不是正确率。
+baseline 与旧 v4 完整核心正确均 6/10。当前 verification-opt-v1 完整核心正确为 9/10（90%），平均 36.448 秒；旧 v4 为 44.85 秒，baseline 为 70.39 秒。
+当前 10/10 complete，但 Ulta 使用了错误目标期间，因此准确率为 9/10。全部最终回答重新通过引用检查，48/48 引用接口成功。
+本轮仅完成一个迭代版本，因达到 80% 目标停止；模型与预算不变、题目与金标不变。原始过程、代码快照、复核和后续优化方向保留于本地 verification-opt-v1。
+后续优先解决公告年与发行人财年歧义；再评估完整校验后发布、结构化表格与有限指标别名，并以未见题和重复运行核实效果。
 这批题已用于开发排错，属于开发集回归而非独立留出；暖缓存/随机性/提前失败影响耗时。
 没有同模型裸调用/ChatGPT 对照，没有全量 FinanceBench 或完整研报/XLSX 评测，不能声称超越 ChatGPT。
 下一次正式评审必须固定预算/资料截止、保留原始过程、核对语义/期间/数值/交付并使用未见样本与重复运行。

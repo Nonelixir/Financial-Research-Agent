@@ -15,5 +15,7 @@ uv run python eval/runners/financebench_pilot.py \
 ```
 
 Run from the repository root after starting the service. Default base URL is http://127.0.0.1:8000 ; override with --base-url.
+metadata.json records SHA256 for the configured prompt file, sample file and Python/TOML source files. These describe runner-local files; confirm matching code/configuration separately when evaluating a remote service.
+The latest local development result, verification-opt-v1, has 9/10 correct complete core answers; Ulta remains incorrect due to target-period mismatch. review.json retains case verdicts; iteration.json retains optimization directions and the stopping condition. This does not establish accuracy on unseen questions.
 No historical evaluation-report Markdown is retained; metadata, JSONL, case JSON and review.json remain as raw acceptance evidence.
 `financebench-pilot-20261012-v2` is invalid startup evidence with no model calls, excluded from scores.

@@ -26,6 +26,40 @@ def test_negative_currency_forms(text):
     assert money_value(MONEY.search(text))[0] == -600
 
 
+def test_formula_parentheses_and_currency_abbreviations():
+    text = "365 * (($1,587m + $1,174m) / 2)"
+    assert [money_value(m)[0] for m in MONEY.finditer(text)] == [
+        Decimal("1587000000"), Decimal("1174000000")
+    ]
+    assert money_value(MONEY.search("($1.5m)"))[0] == Decimal("-1500000")
+
+
+def test_original_cashflow_outflow_binding(tmp_path):
+    store, _, hit = evidence(tmp_path)
+    c = hit.citation
+    c.locator.exact_quote = (
+        "In millions. Operating activities 3,565; Financing activities (3,264)."
+    )
+    store.register_citation(c)
+    claim = Claim(
+        text="Financing activities used $3,264 million.",
+        citation_ids=[c.citation_id],
+        numeric_bindings=[
+            NumericBinding(text="$3,264 million", citation_id=c.citation_id,
+                           presentation="outflow")
+        ],
+    )
+    verify_answer_citations(Answer(claims=[claim]), {c.citation_id}, store)
+    claim.text = "Operating activities used $3,565 million."
+    claim.numeric_bindings[0].text = "$3,565 million"
+    with pytest.raises(CitationVerificationError, match="negative literal"):
+        verify_answer_citations(Answer(claims=[claim]), {c.citation_id}, store)
+    claim.text = "Financing activities provided $3,264 million."
+    claim.numeric_bindings[0].text = "$3,264 million"
+    with pytest.raises(CitationVerificationError, match="outflow/loss"):
+        verify_answer_citations(Answer(claims=[claim]), {c.citation_id}, store)
+
+
 def test_outflow_not_inflow_and_explicit_binding(tmp_path):
     store = setup_store(tmp_path / "signed.sqlite3")
     c = FactResolver(store).resolve(COMPANY, "revenue", "2024-FY").citations[0]

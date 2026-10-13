@@ -2,7 +2,7 @@
 
 [English](../en/operations.md) · [README](../../README.md)
 
-按当前代码核对：2026-10-12。
+按当前代码核对：2026-10-13。
 
 ## 安装与启动
 
@@ -24,7 +24,10 @@ uv run uvicorn finagent.api:app --host 127.0.0.1 --port 8000
 ## 配置表
 
 `config.py` 的 Settings 从环境/.env 读取（环境优先），get_settings 缓存；修改需重启。
-Prompt TOML 每次请求重读，不同于环境配置。
+Prompt TOML 每次请求重读，不同于环境配置。Python 校验代码变更需要重启进程才能加载。
+
+更新已有部署时，在项目根目录先拉取代码并按需同步依赖、构建前端，再向原服务进程发送 SIGTERM 并启动同一端口的单 worker。保留 .env、SQLite 与 workspaces。构建产物位于 src/finagent/static/workspace，不是 frontend/dist。
+启动后检查 /api/health、主页及主页引用的 assets 均返回成功；用 .data/server.log 排查启动错误。发布版本以 Git commit 标识，避免把旧进程的存活检查当作新代码已加载。
 
 | 配置 | 默认 | 作用 |
 | --- | --- | --- |

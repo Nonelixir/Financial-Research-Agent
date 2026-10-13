@@ -2,7 +2,7 @@
 
 [中文](../zh-CN/testing-capabilities.md) · [README](../../README.en.md)
 
-Verified against current implementation: 2026-10-12.
+Verified against current implementation: 2026-10-13.
 
 ## Capability levels
 
@@ -24,7 +24,7 @@ Verified against current implementation: 2026-10-12.
 
 - Fiscal-year/document-year ambiguity lacks a deterministic target-period gate; real evidence can be from the wrong year.
 - HTML tables lack structured row/column/unit extraction; narrative digits only have literal support.
-- Money parsing may reject arithmetic parentheses or m shorthand; narrative outflow binding differs from numeric bindings.
+- Money parsing distinguishes formula/accounting parentheses and supports m/b/k/bn. Narrative outflow bindings still check negative literals and nearby wording without proving table row/column identity; narrative losses may require retries.
 - Copied IDs/spans, wrong metrics/units may exhaust output retries.
 - Frozen published prefixes conflict with retry rewriting; recoverable claims can contain semantic duplicates.
 - Industry/sample coverage and causal extra assertions are not independently proved.
@@ -42,7 +42,7 @@ uv run ruff check src tests eval/runners/financebench_pilot.py
 npm --prefix frontend run build
 ```
 
-Current baseline is 87 pytest cases covering facts/differences/verification, references, simulated streams/retries, files, languages, SEC mocks, unsafe AST, tampering and scope.
+Current suite has 89 pytest cases covering facts/differences/verification, references, simulated streams/retries, files, languages, SEC mocks, unsafe AST, tampering and scope.
 Counts evolve; record real runs. Unit tests do not measure model quality; builds do not prove browser usability.
 
 ## Existing evaluation method
@@ -53,7 +53,7 @@ Prepare a permitted sample matching the runner schema before using the command b
 The real HTTP runner creates threads and sends questions plus target document names; gold/evidence remains evaluator-side.
 Client budget 180 seconds/question, concurrency two, open company/year scope, as_reported, English; server budget is separate.
 Model gpt-5.6-luna, Responses, 4000 normal output tokens, 60 tools, two retries; live sources and mixed warm caches.
-Files retain metadata/gold, per-case events/answers/sources/persisted threads, results.jsonl and review.json.
+Files retain metadata (including sample-file and source-code SHA256), gold, per-case events/answers/sources/persisted threads, results.jsonl and review.json.
 Token/cost are unavailable, never zero. Numeric/accession judges do not replace entailment review.
 
 ```bash
@@ -68,8 +68,10 @@ Use a new output directory. Health is checked first, but not full model readines
 ## Defensible current conclusion
 
 Raw baseline/v2/v3/v4 data remains. The invalid startup run is marked separately and excluded.
-Baseline and current v4 each delivered six correct complete core answers out of ten. Mean time: v4 44.85 seconds versus baseline 70.39.
-v4 had two correct partial incomplete deliveries, one empty incomplete answer, one wrong period; seven complete statuses are not 70% correctness.
+Baseline and previous v4 each delivered 6/10 correct complete core answers. Current verification-opt-v1 delivered 9/10 (90%), mean 36.448 seconds versus v4 44.85 and baseline 70.39 seconds.
+All ten current answers completed, but Ulta used the wrong target period and counts as incorrect. All final answers were revalidated; 48/48 citation API fetches succeeded.
+This task stopped after one iteration because the 80% target was reached. Model/budgets and questions/gold stayed unchanged. Local verification-opt-v1 retains raw traces, source snapshots, review and further optimization directions.
+Next priorities are document-year/issuer-FY resolution, publication after full validation, structured tables and bounded metric aliases, followed by unseen questions and repeated runs.
 These questions informed development, so results are development regressions, not independent holdout scores. Cache/randomness/early failures affect latency.
 No bare-model/ChatGPT comparison, full FinanceBench or end-to-end report/XLSX benchmark was run; superiority over ChatGPT is unproved.
 Formal review requires fixed budgets/corpus cutoff, full traces, semantic/period/numeric/delivery review, unseen samples and repeated runs.

@@ -53,8 +53,11 @@ def substantive_numbers(text: str) -> list[str]:
 
 
 MONEY = re.compile(
-    r"(?P<prefix_sign>[-−(]?)\s*(?:\bUSD\s*|US\$\s*|\$\s*)"
-    r"(?P<amount>[-−]?\d[\d,]*(?:\.\d+)?)\s*(?P<scale>billion|million|thousand)?\)?"
+    r"(?P<prefix_sign>[-−]?)\s*(?P<accounting>\(\s*(?=(?:USD|US\$|\$)\s*"
+    r"[-−]?\d[\d,]*(?:\.\d+)?\s*(?:billion|million|thousand|bn|[bmk])?\s*\)))?"
+    r"(?:\bUSD\s*|US\$\s*|\$\s*)"
+    r"(?P<amount>[-−]?\d[\d,]*(?:\.\d+)?)\s*"
+    r"(?P<scale>billion\b|million\b|thousand\b|bn\b|[bmk]\b)?\)?"
     r"|(?P<suffix_amount>[-−]?\d[\d,]*(?:\.\d+)?)\s*"
     r"(?P<suffix_scale>十亿|亿|百万|万|千|billion|million|thousand)?\s*"
     r"(?:美元|USD\b|US dollars\b)",
@@ -69,6 +72,10 @@ FACTORS = {
     "billion": "1000000000",
     "million": "1000000",
     "thousand": "1000",
+    "bn": "1000000000",
+    "b": "1000000000",
+    "m": "1000000",
+    "k": "1000",
 }
 
 
@@ -79,7 +86,7 @@ def money_value(match):
         FACTORS.get((groups.get("scale") or groups.get("suffix_scale") or "").lower(), "1")
     )
     amount = Decimal(raw) * factor
-    if groups.get("prefix_sign") in {"-", "−", "("}:
+    if groups.get("prefix_sign") in {"-", "−"} or groups.get("accounting"):
         amount = -abs(amount)
     places = len(raw.split(".")[1]) if "." in raw else 0
     return amount, factor * Decimal(10) ** -places / 2
@@ -160,12 +167,25 @@ def verify_answer_citations(
             bound = citations[binding.citation_id]
             if bound.value is None:
                 quote = getattr(bound.locator, "exact_quote", "")
-                if binding.presentation != "signed" or not literal_numbers_supported(
-                    binding.text, quote
-                ):
+                if not literal_numbers_supported(binding.text, quote):
                     raise CitationVerificationError(
                         f"Claim {index}: original text binding lacks literal support"
                     )
+                if binding.presentation != "signed":
+                    numbers = re.findall(r"\d[\d,]*(?:\.\d+)?", binding.text)
+                    direction = local_direction(
+                        claim.text, claim.text.index(binding.text),
+                        claim.text.index(binding.text) + len(binding.text),
+                    )
+                    negative_literal = len(numbers) == 1 and re.search(
+                        r"(?:\(\s*|[-−]\s*)" + re.escape(numbers[0]) + r"\s*\)?(?!\d)",
+                        quote,
+                    )
+                    if direction != "negative" or not negative_literal:
+                        raise CitationVerificationError(
+                            f"Claim {index}: original text magnitude needs a negative literal "
+                            "and explicit outflow/loss wording"
+                        )
                 # Narrative support is not numerical replay; never manufacture a ValueRef.
                 continue
             monetary = MONEY.search(binding.text)

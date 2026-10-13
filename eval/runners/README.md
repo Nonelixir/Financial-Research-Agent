@@ -15,6 +15,8 @@ uv run python eval/runners/financebench_pilot.py \
 ```
 
 工作目录为项目根；先启动服务。runner 默认 http://127.0.0.1:8000 ，可用 --base-url 修改。
+metadata.json 记录实际配置的 Prompt 文件、题集文件和各 Python/TOML 源文件 SHA256；这些是 runner 本地文件摘要，远程服务需另行确认使用相同代码和配置。
+最新本地开发集结果 `verification-opt-v1` 为 9/10 完整核心正确；Ulta 目标期间错误仍计错。review.json 保留逐题理由，iteration.json 保留优化方向与停止条件。此结果不代表未见题准确率。
 无独立评测报告 Markdown；元数据、JSONL、case JSON 与 review.json 保留作为原始验收数据。
 `financebench-pilot-20261012-v2` 是服务尚未监听导致的无模型调用启动记录，已标注 invalid，不计成绩。
 

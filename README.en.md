@@ -36,7 +36,7 @@ For trusted-network access, bind 0.0.0.0 behind proper controls. No authenticati
 
 ## Current documentation
 
-Verified: 2026-10-12. Each module has Chinese and English versions describing current implementation only.
+Verified: 2026-10-13. Each module has Chinese and English versions describing current implementation only.
 Transitional designs, repair histories and evaluation-report Markdown have been removed. Code/machine schemas are authoritative; keep both languages synchronized.
 
 | Module | English | 中文 |
@@ -88,8 +88,9 @@ uv run ruff check src tests eval/runners/financebench_pilot.py
 npm --prefix frontend run build
 ```
 
-Current tests: 87 passing. The fixed live-model FinanceBench ten-question pilot delivered six correct complete core answers in both baseline and current version.
-Mean time was 44.85 seconds versus 70.39, affected by warm caches, randomness and early failures; accuracy improvement is not established.
+Current tests: 89 passing; Ruff passes. The fixed live-model FinanceBench pilot delivered 9/10 correct complete core answers (90%) in verification-opt-v1 versus 6/10 in baseline and previous v4.
+This task stopped after one iteration upon reaching its 80% target. Mean time: 36.448 seconds versus v4 44.85 and baseline 70.39 seconds.
+Model/budgets and questions/gold stayed unchanged. Ulta target-period ambiguity remains incorrect. This single development regression with mixed warm caches and stochastic output does not establish accuracy on unseen questions.
 Raw JSON/events/citations/reviews remain locally in `eval/results/` and are excluded from the public repository. The fixed FinanceBench sample is also excluded pending redistribution review.
 The public runner requires a separately prepared, permitted sample matching its input schema. These scores are local development results, not an independently auditable benchmark bundled with this repository.
 No full benchmark, bare-model/ChatGPT comparison or full report-delivery benchmark exists.

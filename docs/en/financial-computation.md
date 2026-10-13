@@ -2,7 +2,7 @@
 
 [中文](../zh-CN/financial-computation.md) · [README](../../README.en.md)
 
-Verified against current implementation: 2026-10-12.
+Verified against current implementation: 2026-10-13.
 
 ## Metrics and accounting scope
 
@@ -50,6 +50,8 @@ margin: profit/revenue*100 → percent
 margin delta: current_margin-prior_margin → percentage_points
 DPO: 365*((ap_prior+ap_current)/2)/(cogs+inventory_current-inventory_prior) → days
 ```
+
+Margin-change inputs must use previously returned percent citations, rather than subtracting USD gross-profit values and relabeling the result percentage_points. Answers can explain formulas using metric names; computations retain exact input IDs, values and units, reducing repeated transcription.
 
 These illustrate methods, not universally correct accounting definitions. Inputs must be original XBRL or registered derived values; narrative quotes are not inferred ValueRefs.
 Records retain expression, input IDs/values/units, result, precision and verification. Recursive source lookup/replay detects changed inputs/results before publication.

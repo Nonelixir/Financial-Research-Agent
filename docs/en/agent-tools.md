@@ -2,7 +2,7 @@
 
 [中文](../zh-CN/agent-tools.md) · [README](../../README.en.md)
 
-Verified against current implementation: 2026-10-12.
+Verified against current implementation: 2026-10-13.
 
 ## Model loop and context
 
@@ -46,6 +46,7 @@ version=1; [prompts] contains system, user_template, source_template, coverage, 
 `prompts.py` validates exact template variables; use `$variable` and `$$` for literal dollars.
 
 System instructions cover active research, registered evidence only, untrusted web content, issuer non-GAAP reconciliation, explicit period ambiguity and real file delivery.
+For focused questions, the prompt requests concise cited paragraphs and metric names in formula explanations. Computation records retain input lineage; margin changes subtract derived percent citations and use percentage_points.
 Language mode overrides matching the question language. Prompt edits cannot create tools, enable execution or bypass validation.
 Python function signatures define tool schemas; interface changes must update schema, validation, tests and both language documents.
 
