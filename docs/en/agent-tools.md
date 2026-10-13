@@ -46,6 +46,7 @@ version=1; [prompts] contains system, user_template, source_template, coverage, 
 `prompts.py` validates exact template variables; use `$variable` and `$$` for literal dollars.
 
 System instructions cover active research, registered evidence only, untrusted web content, issuer non-GAAP reconciliation, explicit period ambiguity and real file delivery.
+Substantive company, industry and financial-performance analyses automatically deliver a source-checked Markdown report and accompanying financial XLSX without an explicit file request. Focused factual questions do not trigger automatic files. The prompt requires both deliveries before completion and real download links; unavailable tools, failures or insufficient data require incomplete status while retaining successful files. Workbooks contain supported verified metrics, not necessarily narrative-only figures or derived calculations. This is a prompt requirement; existing output checks primarily enforce explicitly requested reports/Excel files.
 For focused questions, the prompt requests concise cited paragraphs and metric names in formula explanations. Computation records retain input lineage; margin changes subtract derived percent citations and use percentage_points.
 Language mode overrides matching the question language. Prompt edits cannot create tools, enable execution or bypass validation.
 Python function signatures define tool schemas; interface changes must update schema, validation, tests and both language documents.
@@ -58,6 +59,6 @@ Identical failing calls are blocked after two failures. Errors expose code/type/
 
 Exact greetings return a conversational reply directly. The prompt directs capability questions, clarification and unrelated requests to claims=[], message and complete without research plans. Message cannot coexist with claims; explicit currency amounts/percentages are rejected. This field does not have comprehensive semantic intent validation.
 
-Multi-company financial comparisons use separate company paragraphs with amounts/percentages bound to matching issuer, metric and actual period. Retries retain derived citations and bindings while repairing errors. Ordinary industry analysis does not require publish_report.
+Multi-company financial comparisons use separate company paragraphs with amounts/percentages bound to matching issuer, metric and actual period. Retries retain derived citations and bindings while repairing errors. Ordinary industry analysis also requires publish_report and generate_workbook.
 
 Answer body is published after complete validation; tool/status progress remains streamed. Ordinary industry answers are concise to fit the normal output budget. The earlier ten-question score predates this publication change.
