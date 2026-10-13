@@ -49,3 +49,5 @@ source_snapshots 按 URL+正文 hash 保存，但 Citation 尚无完整不可变
 派生 SourceRef 继承首输入，完整血缘看 DerivedLocator 输入列表和 computations，UI 不是完整交互血缘浏览器。
 当前没有统一目标期间 gate、行列数值提取、逐句蕴含核验、覆盖率证明；真实引用可支持错误期间。
 人工必须核对发行人、实际 start/end、量纲、指标定义、非 GAAP 调节和因果出处。
+
+Answer.message 用于问候、能力说明、澄清或无关请求的范围说明，不需要来源；不可与 claims 混用，显式金融金额和百分率被拒绝。它不是研究事实的替代通道，尚无全面语义校验。

@@ -42,7 +42,7 @@ uv run ruff check src tests eval/runners/financebench_pilot.py
 npm --prefix frontend run build
 ```
 
-Current suite has 89 pytest cases covering facts/differences/verification, references, simulated streams/retries, files, languages, SEC mocks, unsafe AST, tampering and scope.
+Current suite has 97 pytest cases covering facts/differences/verification, references, simulated streams/retries, files, languages, SEC mocks, unsafe AST, tampering and scope.
 Counts evolve; record real runs. Unit tests do not measure model quality; builds do not prove browser usability.
 
 ## Existing evaluation method

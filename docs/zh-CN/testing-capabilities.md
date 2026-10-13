@@ -42,7 +42,7 @@ uv run ruff check src tests eval/runners/financebench_pilot.py
 npm --prefix frontend run build
 ```
 
-当前 89 项 pytest；覆盖事实/差分/核验、引用、模拟流式/重试、文件限制、语言、SEC mock、公式不安全 AST、输入/结果篡改、scope 等。
+当前 97 项 pytest；覆盖事实/差分/核验、引用、模拟流式/重试、文件限制、语言、SEC mock、公式不安全 AST、输入/结果篡改、scope 等。
 测试数量随代码变化；记录实际运行，不以此代替真实模型效果。构建只证明编译，不证明浏览器操作正确。
 
 ## 现有评测方法

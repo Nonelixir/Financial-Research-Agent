@@ -2,7 +2,7 @@
 
 [English](../en/api.md) · [README](../../README.md)
 
-按当前代码核对：2026-10-12。
+按当前代码核对：2026-10-13。
 
 ## 基础结构
 
@@ -66,3 +66,5 @@ done 是终态运输标志，complete 仅表示通过当前门槛，不等于正
 400/422 请求格式；404 不存在；409 活跃会话或文件变更/表格核验；502 显式 SEC ingest 失败。
 SSE 内工具失败不一定用 HTTP 错误码，应读取 status.detail/error 与最终 status_reason。
 中途断流不支持 event-id 自动重放/恢复，调用方需要重新读取会话状态。
+
+普通对话使用 Answer.message（默认空字符串），claims=[]；研究结论仍使用带引用的 claims。纯问候直接回复，不调用模型或研究工具。

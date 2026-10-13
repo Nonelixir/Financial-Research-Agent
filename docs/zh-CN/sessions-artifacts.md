@@ -2,7 +2,7 @@
 
 [English](../en/sessions-artifacts.md) · [README](../../README.md)
 
-按当前代码核对：2026-10-12。
+按当前代码核对：2026-10-13。
 
 ## 持久化与上下文
 
@@ -47,3 +47,5 @@ publish_report 生成带引用与来源定位的 Markdown，登记 report=true�
 下载按 artifact_id 查 metadata，读取文件、核对 SHA256，表格再验证原数据；缺失/变更返回 409。
 通用文本发布没有财务核验。工作文件不自动成为下载产物，页面只展示有 file metadata 的产物。
 备份必须同时包含 SQLite 一致快照和整个工作目录；删除会话不等于清理磁盘，归档/清理需运维显式处理。
+
+会话回答的普通对话 message 也进入 messages.content；它不创建研究来源或交付文件。

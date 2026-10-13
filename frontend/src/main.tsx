@@ -44,7 +44,7 @@ function RichText({text}:{text:string}) {
 }
 function AnswerBody({answer}:{answer:Answer}) {
   const ids=[...new Set(answer.claims.flatMap(c=>c.citation_ids))];
-  return <div className="prose-answer">{answer.claims.map((claim,index)=><RichText key={index}
+  return <div className="prose-answer">{answer.message&&<RichText text={answer.message}/>}{answer.claims.map((claim,index)=><RichText key={index}
     text={claim.text+' '+claim.citation_ids.map(id=>`[\\[${ids.indexOf(id)+1}\\]](#source/${id})`).join(' ')}/>)}
     {answer.caveats.map((c,i)=><p className="notice" key={i}>{c}</p>)}</div>;
 }
@@ -133,7 +133,7 @@ function App() {
           assistantId=data.assistant_id;setThread(t=>t?{...t,title:t.title==='新对话'?question.slice(0,40):t.title,messages:t.messages.map(m=>m.id===pendingId?{...m,id:assistantId}:m.id===userId?{...m,id:data.user_id}:m)}:t);
         }else if(event==='answer.snapshot'){
           if(data.status_reason==='validation_retry'||(!data.claims.length&&data.status_reason==='streaming'))return;
-          latest=data;updateMessage(assistantId,m=>({...m,answer:data,content:data.claims.map((c:any)=>c.text).join('\n\n')}));
+          latest=data;updateMessage(assistantId,m=>({...m,answer:data,content:[data.message,...data.claims.map((c:any)=>c.text)].filter(Boolean).join('\n\n')}));
         }else if(event==='artifact'){setThread(t=>t?{...t,artifacts:[...t.artifacts,data]}:t);setSelected(data);}
         else if(event==='done'){finalStatus=data.status;updateMessage(assistantId,m=>({...m,status:data.status}));}
         else if(event==='sample'){setThread(t=>t?{...t,research_sample:data}:t);updateMessage(assistantId,m=>({...m,events:[...m.events,{event,data}]}));}

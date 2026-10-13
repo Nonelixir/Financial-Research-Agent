@@ -2,7 +2,7 @@
 
 [中文](../zh-CN/frontend.md) · [README](../../README.en.md)
 
-Verified against current implementation: 2026-10-12.
+Verified against current implementation: 2026-10-13.
 
 ## Technology and responsibilities
 
@@ -42,3 +42,5 @@ The diagram is standalone HTML with separate language entries, independent of ch
 Run `npm --prefix frontend ci` and `npm --prefix frontend run build`; output is `src/finagent/static/workspace/`.
 FastAPI serves /assets on the same origin; no production Node service. Restart after the first asset build to register its mount.
 SSE changes require coordinated types/parser/state changes; UI copy needs both languages. Never bypass backend validation to expose scratch text.
+
+Conversational message text renders separately and is also saved in persistent message content, remaining visible after reload without fabricated citations.

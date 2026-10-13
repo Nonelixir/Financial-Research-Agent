@@ -2,7 +2,7 @@
 
 [中文](../zh-CN/api.md) · [README](../../README.en.md)
 
-Verified against current implementation: 2026-10-12.
+Verified against current implementation: 2026-10-13.
 
 ## Base contract
 
@@ -66,3 +66,5 @@ Preserve partial/incomplete on errors/cancellation; an empty answer is not succe
 400/422 invalid inputs; 404 missing entities; 409 active sessions/file changes/table validation; 502 explicit SEC ingestion failure.
 In-stream tool errors may not use HTTP error codes: inspect status details and final status_reason.
 No event-ID replay/resumption after disconnect; reload persisted thread state.
+
+Conversational replies use Answer.message (default empty) with claims=[]. Research findings still use cited claims. Exact greetings return directly without model or research tools.

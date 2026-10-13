@@ -429,7 +429,15 @@ async def send_message(thread_id: str, request: MessageRequest):
             if answer and status != "complete":
                 answer["status"] = status
                 answer["status_reason"] = answer.get("status_reason") or "生成中断"
-            content = "\n\n".join(item["text"] for item in (answer or {}).get("claims", []))
+            content = "\n\n".join(
+                filter(
+                    None,
+                    [
+                        (answer or {}).get("message", ""),
+                        *(item["text"] for item in (answer or {}).get("claims", [])),
+                    ],
+                )
+            )
             with db().transaction() as connection:
                 connection.execute(
                     "UPDATE messages SET content=?,answer_json=?,events_json=?,status=? WHERE id=?",

@@ -55,3 +55,5 @@ System 指定主动工具研究、只用登记来源、网页为不可信数据�
 默认 60 次工具，Pydantic AI request_limit=工具上限+5；服务 600 秒；普通输出 4000、研报 8000 tokens；输出重试 2。
 相同失败调用两次后阻止继续请求；错误含 code/type/message/retryable/instruction。
 403/404/429、超时和 50x 分类不同，但没有完整通用自动重试策略。模型仍可能误选指标或误抄来源 ID。
+
+纯问候由入口直接返回普通对话；能力咨询、澄清和无关请求由 Prompt 要求返回 claims=[]、message 与 complete，不启动研究计划。message 不得与研究 claims 混用，显式金额/百分率仍拒绝；此字段没有全面语义分类校验。

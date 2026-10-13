@@ -154,7 +154,7 @@ const renderAnswer = (answer, isDone = false) => {
       <p>${escapeHtml(claim.text)} ${claim.citation_ids.map(citationButton).join('')}</p>
     </article>`).join('');
   const caveats = answer.caveats.map((item) => `<p class="caveat">${escapeHtml(item)}</p>`).join('');
-  $('#answer').innerHTML = `${warning}${claims}${caveats}${isDone ? '' : '<span class="stream-caret"></span>'}`;
+  $('#answer').innerHTML = `${warning}${answer.message ? `<p>${escapeHtml(answer.message)}</p>` : ''}${claims}${caveats}${isDone ? '' : '<span class="stream-caret"></span>'}`;
   bindCitations();
 };
 

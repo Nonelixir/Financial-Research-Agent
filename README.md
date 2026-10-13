@@ -87,7 +87,7 @@ uv run ruff check src tests eval/runners/financebench_pilot.py
 npm --prefix frontend run build
 ```
 
-当前 89 项测试通过，Ruff 通过。真实模型固定 FinanceBench 10 题，当前 verification-opt-v1 完整核心正确 9/10（90%），原版和旧 v4 为 6/10。
+当前 97 项测试通过，Ruff 通过。真实模型固定 FinanceBench 10 题，当前 verification-opt-v1 完整核心正确 9/10（90%），原版和旧 v4 为 6/10。
 本轮一个迭代版本达到 80% 目标后停止；当前平均 36.448 秒、旧 v4 44.85 秒、原版 70.39 秒。
 模型与预算、题目和金标不变；剩余错题为 Ulta 目标期间歧义。此为单次开发集回归，暖缓存和随机性影响结果，不代表未见题准确率。
 原始 JSON、事件、来源与复核仅在本地 `eval/results/` 保留，不随公开仓库发布；FinanceBench 固定题集亦待再分发许可审查，不包含在本仓库。

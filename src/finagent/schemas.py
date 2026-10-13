@@ -143,6 +143,7 @@ class Claim(BaseModel):
 
 class Answer(BaseModel):
     claims: list[Claim]
+    message: str = ""
     caveats: list[str] = Field(default_factory=list)
     status: CompletionStatus = CompletionStatus.COMPLETE
     status_reason: str | None = None

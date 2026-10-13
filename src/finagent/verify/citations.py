@@ -132,6 +132,15 @@ def verify_answer_citations(
     allowed_citation_ids: set[str],
     store: SQLiteStore,
 ) -> Answer:
+    if answer.message and (
+        answer.claims
+        or MONEY.search(answer.message)
+        or re.search(r"\d\s*(?:%|percent\b|美元|亿元|万元)", answer.message, re.I)
+    ):
+        raise CitationVerificationError(
+            "Conversational message cannot contain cited research claims or financial "
+            "amounts; use claims with registered evidence for financial findings"
+        )
     for index, claim in enumerate(answer.claims, 1):
         unknown = set(claim.citation_ids) - allowed_citation_ids
         if unknown:
@@ -174,7 +183,8 @@ def verify_answer_citations(
                 if binding.presentation != "signed":
                     numbers = re.findall(r"\d[\d,]*(?:\.\d+)?", binding.text)
                     direction = local_direction(
-                        claim.text, claim.text.index(binding.text),
+                        claim.text,
+                        claim.text.index(binding.text),
                         claim.text.index(binding.text) + len(binding.text),
                     )
                     negative_literal = len(numbers) == 1 and re.search(
@@ -259,8 +269,10 @@ def verify_answer_citations(
                     and match.group(0).strip() == b.text.replace("**", "").strip()
                     for b in claim.numeric_bindings
                 )
-                if amount >= 0 and direction == "negative" and (
-                    not explicit_numeric_binding or bound_outflow
+                if (
+                    amount >= 0
+                    and direction == "negative"
+                    and (not explicit_numeric_binding or bound_outflow)
                 ):
                     amount = -amount
                 # Original text can support a literal amount even in a mixed XBRL/text claim.
@@ -340,9 +352,7 @@ def verify_answer_citations(
                     for c in citations.values()
                     if hasattr(c.locator, "exact_quote")
                 )
-                quote_numbers = {
-                    n.replace(",", "") for n in re.findall(r"\d+(?:[.,]\d+)*", quotes)
-                }
+                quote_numbers = {n.replace(",", "") for n in re.findall(r"\d+(?:[.,]\d+)*", quotes)}
                 if quotes and all(n.replace(",", "") in quote_numbers for n in numbers):
                     # Literal narrative numbers; not independent financial verification.
                     continue

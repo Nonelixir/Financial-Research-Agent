@@ -49,3 +49,5 @@ source_snapshots retains URL+body hash, but citations lack a complete immutable-
 Derived SourceRef inherits the first input; full lineage requires input IDs and computations. The UI is not a complete interactive lineage browser.
 There is no unified target-period gate, structured table-cell extraction, sentence entailment or coverage proof. Real citations can refer to the wrong period.
 Analysts must verify issuer, actual dates, units, metric definitions, non-GAAP reconciliation and causal passages.
+
+Answer.message is for greetings, capabilities, clarification and scope explanations without citations. It cannot coexist with claims; explicit financial amounts and percentages are rejected. It is not a substitute for research claims and lacks comprehensive semantic validation.

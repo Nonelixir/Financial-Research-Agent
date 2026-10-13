@@ -2,7 +2,7 @@
 
 [中文](../zh-CN/sessions-artifacts.md) · [README](../../README.en.md)
 
-Verified against current implementation: 2026-10-12.
+Verified against current implementation: 2026-10-13.
 
 ## Persistence and context
 
@@ -47,3 +47,5 @@ Period inclusion requires revenue for at least one company; every company/metric
 Downloads resolve artifact metadata, read bytes, check SHA256 and revalidate table source data; missing/changed files return 409.
 Generic text publication has no financial verification. Work files are not automatically downloadable artifacts; only artifacts with file metadata appear.
 Back up both a consistent SQLite snapshot and all workspace files. Thread deletion does not reclaim disk; archive cleanup is an explicit operational action.
+
+Conversational Answer.message is included in messages.content; it creates neither research evidence nor artifacts.

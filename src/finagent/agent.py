@@ -39,6 +39,20 @@ class ResearchAgent:
     def text(self, zh: str, en: str) -> str:
         return en if self.language == "en" else zh
 
+    def greeting(self, question: str, scope: ResearchScope) -> Answer | None:
+        normalized = re.sub(r"[\s!！。,.，?？]+", "", question).casefold()
+        if normalized not in {"你好", "您好", "嗨", "哈喽", "hello", "hi", "hey"}:
+            return None
+        return Answer(
+            claims=[],
+            message=(
+                "Hello! I can help you research companies and financial filings. "
+                "What would you like to explore?"
+                if scope.language == "en"
+                else "你好！我可以帮助你研究公司、分析财报或生成报告。你想了解什么？"
+            ),
+        )
+
     def emit(self, event: str, payload: dict) -> None:
         from finagent.localization import status_payload
 
@@ -120,6 +134,8 @@ class ResearchAgent:
         extra_context: str = "",
     ) -> Answer:
         self.language = scope.language
+        if greeting := self.greeting(question, scope):
+            return greeting
         if not hits and (
             not self.settings.agentic_research
             or not self.settings.llm_api_key
@@ -182,6 +198,9 @@ class ResearchAgent:
         extra_context: str = "",
     ) -> AsyncIterator[Answer]:
         self.language = scope.language
+        if greeting := self.greeting(question, scope):
+            yield greeting
+            return
         if (
             (not hits and not self.settings.agentic_research)
             or not self.settings.llm_api_key

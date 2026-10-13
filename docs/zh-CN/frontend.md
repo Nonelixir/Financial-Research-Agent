@@ -2,7 +2,7 @@
 
 [English](../en/frontend.md) · [README](../../README.md)
 
-按当前代码核对：2026-10-12。
+按当前代码核对：2026-10-13。
 
 ## 技术与职责
 
@@ -42,3 +42,5 @@ English/中文切换写 localStorage，后续请求 Scope.language 同步，计�
 `npm --prefix frontend ci`，`npm --prefix frontend run build`，输出 `src/finagent/static/workspace/`。
 生产 FastAPI 同源提供 /assets，无独立 Node。首次生成 assets 后应重启服务以注册挂载。
 改 SSE 字段要同步 types/API/state；改 UI 文案同步语言表；不要绕过后端校验直接显示模型 scratch text。
+
+普通对话的 message 独立显示；会话持久化同时保存该文本，刷新后仍可阅读，无需虚构引用。

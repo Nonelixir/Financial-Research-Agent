@@ -55,3 +55,5 @@ Python function signatures define tool schemas; interface changes must update sc
 Defaults: 60 tool calls, Pydantic AI request_limit=tool limit+5, 600 seconds, 4000 normal/8000 report output tokens, 2 output retries.
 Identical failing calls are blocked after two failures. Errors expose code/type/message/retryable/instruction.
 403/404/429, timeout and 50x differ, but there is no comprehensive automatic retry policy. Wrong metric choice and copied citation IDs remain possible.
+
+Exact greetings return a conversational reply directly. The prompt directs capability questions, clarification and unrelated requests to claims=[], message and complete without research plans. Message cannot coexist with claims; explicit currency amounts/percentages are rejected. This field does not have comprehensive semantic intent validation.
