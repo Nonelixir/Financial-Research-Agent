@@ -28,7 +28,7 @@ There is no Redis, vector database, queue, worker or accepted code-execution bac
 1. Browser submits a question, optional scope and language; the session endpoint stores a user message and a running placeholder.
 2. Session context includes bounded history, historical citation IDs, artifact summaries and the saved research sample.
 3. The agent chooses tools on demand; tools register new evidence for subsequent model turns. There is no mandatory all-metrics prefetch.
-4. Output becomes Answer/Claim. Only closed, checked claims enter public answer snapshots.
+4. Output becomes Answer/Claim. Only fully validated answers enter public answer snapshots.
 5. Files require explicit creation/publication. SSE carries states, sources, plans, samples, artifacts, answers and terminal status.
 6. On completion/cancellation, the session stores the last answer and events. A restart does not resume an unfinished model task.
 

@@ -88,7 +88,7 @@ uv run ruff check src tests eval/runners/financebench_pilot.py
 npm --prefix frontend run build
 ```
 
-Current tests: 97 passing; Ruff passes. The fixed live-model FinanceBench pilot delivered 9/10 correct complete core answers (90%) in verification-opt-v1 versus 6/10 in baseline and previous v4.
+Current tests: 99 passing; Ruff passes. The fixed live-model FinanceBench pilot delivered 9/10 correct complete core answers (90%) in verification-opt-v1 versus 6/10 in baseline and previous v4.
 This task stopped after one iteration upon reaching its 80% target. Mean time: 36.448 seconds versus v4 44.85 and baseline 70.39 seconds.
 Model/budgets and questions/gold stayed unchanged. Ulta target-period ambiguity remains incorrect. This single development regression with mixed warm caches and stochastic output does not establish accuracy on unseen questions.
 Raw JSON/events/citations/reviews remain locally in `eval/results/` and are excluded from the public repository. The fixed FinanceBench sample is also excluded pending redistribution review.

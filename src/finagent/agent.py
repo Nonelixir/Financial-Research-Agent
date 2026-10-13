@@ -333,6 +333,9 @@ class ResearchAgent:
                             and agent._output_toolset
                             and (part.tool_name in agent._output_toolset.processors)
                         ):
+                            # Keep only the latest candidate for failure recovery. Drafts
+                            # are not published before whole-answer validation succeeds.
+                            self.committed_answer = CommittedAnswer()
                             self.committed_answer.update(
                                 part.args_as_json_str(), deps.allowed_citation_ids, self.store
                             )
@@ -372,28 +375,10 @@ class ResearchAgent:
                         status_reason="validation_retry",
                     )
                 async with node.stream(run.ctx) as stream:
-                    async for response in stream.stream_response(debounce_by=0.08):
-                        # Only closed claims from output-tool arguments are public.
-                        # Text/reasoning/tool planning and incomplete strings never enter the body.
-                        for part in response.parts:
-                            if not isinstance(part, ToolCallPart):
-                                continue
-                            if (
-                                agent._output_toolset is None
-                                or part.tool_name not in agent._output_toolset.processors
-                            ):
-                                continue
-                            if (
-                                self.tool_context.get("thread_id")
-                                and deps.tool_context.get("requires_workbook")
-                                and not any(a["kind"] == "table" for a in deps.generated_artifacts)
-                            ):
-                                continue
-                            output = self.committed_answer.update(
-                                part.args_as_json_str(), deps.allowed_citation_ids, self.store
-                            )
-                            if output is not None:
-                                yield output
+                    async for _ in stream.stream_response(debounce_by=0.08):
+                        # Drain model output without publishing provisional arguments.
+                        # Tool/status progress remains streamed through the event sink.
+                        pass
             if run.result is None:
                 raise RuntimeError("Agent completed without a final result")
             final = run.result.output
@@ -564,13 +549,6 @@ class ResearchAgent:
         async def validate_output(ctx: RunContext[AgentDeps], output: Answer) -> Answer:
             if ctx.partial_output:
                 return output
-            if self.committed_answer and not self.committed_answer.extends(output.claims):
-                self.validation_failure("Published claim prefix changed", output)
-                raise ModelRetry(
-                    "Keep already published claims EXACTLY as the initial prefix; "
-                    "only fix or append unpublished claims. Published claims: "
-                    + Answer(claims=self.committed_answer.claims).model_dump_json()
-                )
             if (
                 self.tool_context.get("thread_id")
                 and re.search(r"xlsx|excel|工作簿", question, re.IGNORECASE)

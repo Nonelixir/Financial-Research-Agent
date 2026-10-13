@@ -29,7 +29,8 @@ def test_negative_currency_forms(text):
 def test_formula_parentheses_and_currency_abbreviations():
     text = "365 * (($1,587m + $1,174m) / 2)"
     assert [money_value(m)[0] for m in MONEY.finditer(text)] == [
-        Decimal("1587000000"), Decimal("1174000000")
+        Decimal("1587000000"),
+        Decimal("1174000000"),
     ]
     assert money_value(MONEY.search("($1.5m)"))[0] == Decimal("-1500000")
 
@@ -37,16 +38,13 @@ def test_formula_parentheses_and_currency_abbreviations():
 def test_original_cashflow_outflow_binding(tmp_path):
     store, _, hit = evidence(tmp_path)
     c = hit.citation
-    c.locator.exact_quote = (
-        "In millions. Operating activities 3,565; Financing activities (3,264)."
-    )
+    c.locator.exact_quote = "In millions. Operating activities 3,565; Financing activities (3,264)."
     store.register_citation(c)
     claim = Claim(
         text="Financing activities used $3,264 million.",
         citation_ids=[c.citation_id],
         numeric_bindings=[
-            NumericBinding(text="$3,264 million", citation_id=c.citation_id,
-                           presentation="outflow")
+            NumericBinding(text="$3,264 million", citation_id=c.citation_id, presentation="outflow")
         ],
     )
     verify_answer_citations(Answer(claims=[claim]), {c.citation_id}, store)
@@ -351,3 +349,42 @@ def test_end_year_discovery_and_strict_form_guard(tmp_path, monkeypatch):
             await agent.research_tools.client.close()
 
     asyncio.run(run())
+
+
+def test_negative_growth_magnitude_and_positive_margin(tmp_path):
+    store = setup_store(tmp_path / "decline.sqlite3")
+    c = FactResolver(store).resolve(COMPANY, "revenue", "2024-FY").citations[0]
+    deps = SimpleNamespace(store=store, allowed_citation_ids={c.citation_id})
+    d, _ = compute_evidence(deps, "-a/a*0.467", {"a": c.citation_id}, "percent")
+    for text in ["Revenue declined 0.5%.", "收入同比下降约0.5%。", "Growth was -0.5%."]:
+        binding = "0.5%" if "-0.5%" not in text else "-0.5%"
+        claim = Claim(
+            text=text,
+            citation_ids=[d.citation_id],
+            numeric_bindings=[NumericBinding(text=binding, citation_id=d.citation_id)],
+        )
+        verify_answer_citations(Answer(claims=[claim]), {d.citation_id}, store)
+    for text in ["Revenue grew 0.5%.", "毛利率为0.5%。", "收入下降。毛利率为0.5%。"]:
+        with pytest.raises(CitationVerificationError):
+            verify_answer_citations(
+                Answer(claims=[Claim(text=text, citation_ids=[d.citation_id])]),
+                {d.citation_id},
+                store,
+            )
+
+
+def test_all_paragraph_errors_reported_with_expected_values(tmp_path):
+    store = setup_store(tmp_path / "all-errors.sqlite3")
+    c = FactResolver(store).resolve(COMPANY, "revenue", "2024-FY").citations[0]
+    claims = [
+        Claim(
+            text="Revenue $999.",
+            citation_ids=[c.citation_id],
+            numeric_bindings=[NumericBinding(text="$999", citation_id=c.citation_id)],
+        ),
+        Claim(text="Margin 71.1%.", citation_ids=[c.citation_id]),
+    ]
+    with pytest.raises(CitationVerificationError) as exc:
+        verify_answer_citations(Answer(claims=claims), {c.citation_id}, store)
+    assert "Claim 1" in str(exc.value) and "Claim 2" in str(exc.value)
+    assert "expected=600" in str(exc.value) and "2024-12-31" in str(exc.value)

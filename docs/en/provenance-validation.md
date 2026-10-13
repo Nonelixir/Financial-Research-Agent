@@ -51,3 +51,7 @@ There is no unified target-period gate, structured table-cell extraction, senten
 Analysts must verify issuer, actual dates, units, metric definitions, non-GAAP reconciliation and causal passages.
 
 Answer.message is for greetings, capabilities, clarification and scope explanations without citations. It cannot coexist with claims; explicit financial amounts and percentages are rejected. It is not a substitute for research claims and lacks comprehensive semantic validation.
+
+Answer validation collects the first error from each paragraph together. Numeric-binding errors report citation, expected value/unit, displayed value and original locator to help repair company/period mismatches in one retry. Percentages immediately following decline/reduction wording compare as negative growth magnitudes; unrelated margins are not re-signed. Explicit negatives use signed.
+
+Answer body is published after complete validation; tool/status progress remains streamed. Ordinary industry answers are concise to fit the normal output budget. The earlier ten-question score predates this publication change.

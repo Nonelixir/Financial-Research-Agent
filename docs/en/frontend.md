@@ -17,9 +17,9 @@ Selected companies and persisted samples are non-exhaustive, not the entire indu
 ## Streaming behavior
 
 Tool states group by tool_call_id or phase and show active/complete/warning. Sources/plans/samples/artifacts update the workbench.
-Answer bodies are not raw token streams: the backend parses structured Answer and submits closed, checked claims.
+Answer bodies are not raw token streams: the backend parses structured Answer and publishes its body after whole-answer validation.
 Progress can continue with an empty answer body. Reasoning and incomplete JSON are not public text.
-Frozen prefixes reduce replacement flicker, but model retries may still change a prefix and fail; recovery may duplicate paragraphs. These bugs are not all solved.
+Tool progress remains live, while answer text is buffered until full validation passes. Retries can rewrite unpublished drafts; only the latest candidate is retained for incomplete recovery.
 
 ## Citations and artifacts
 
@@ -44,3 +44,5 @@ FastAPI serves /assets on the same origin; no production Node service. Restart a
 SSE changes require coordinated types/parser/state changes; UI copy needs both languages. Never bypass backend validation to expose scratch text.
 
 Conversational message text renders separately and is also saved in persistent message content, remaining visible after reload without fabricated citations.
+
+Answer body is published after complete validation; tool/status progress remains streamed. Ordinary industry answers are concise to fit the normal output budget. The earlier ten-question score predates this publication change.

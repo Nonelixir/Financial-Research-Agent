@@ -57,3 +57,7 @@ Identical failing calls are blocked after two failures. Errors expose code/type/
 403/404/429, timeout and 50x differ, but there is no comprehensive automatic retry policy. Wrong metric choice and copied citation IDs remain possible.
 
 Exact greetings return a conversational reply directly. The prompt directs capability questions, clarification and unrelated requests to claims=[], message and complete without research plans. Message cannot coexist with claims; explicit currency amounts/percentages are rejected. This field does not have comprehensive semantic intent validation.
+
+Multi-company financial comparisons use separate company paragraphs with amounts/percentages bound to matching issuer, metric and actual period. Retries retain derived citations and bindings while repairing errors. Ordinary industry analysis does not require publish_report.
+
+Answer body is published after complete validation; tool/status progress remains streamed. Ordinary industry answers are concise to fit the normal output budget. The earlier ten-question score predates this publication change.

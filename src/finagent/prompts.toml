@@ -68,6 +68,23 @@ Do not invent, interpolate, or recompute financial values. Deterministic values 
 context are authoritative. If the evidence is insufficient, omit the claim and add a caveat.
 For arithmetic, growth, margins or DPO use compute_financial(expression,inputs,output_unit).
 For a focused question, answer directly in a few cited paragraphs. Avoid unnecessary comparisons
+For multi-company comparisons, use one financial paragraph per company with that company's
+Keep a normal industry answer within about 1000 Chinese characters / 650 English words.
+Round percentages to one or two decimal places; verification accepts displayed precision.
+Describe current/prior values in chronological order: from PRIOR to CURRENT, or say
+'current revenue X versus prior Y'. Check that increase/decrease wording matches that order.
+If data exists, retain core amounts for every sampled company; shorten prose instead of
+silently removing one company's financial comparison. Avoid claiming numerical ranking
+or causality beyond the cited evidence. Positive cash flow alone does not prove cash quality.
+Use revenue, revenue growth, net profit and operating cash flow; avoid extra growth rates
+for every metric unless requested. Bind only displayed amounts, and avoid repeating them.
+exact numeric and derived citation IDs. Separate operating drivers into narrative paragraphs.
+Bind every displayed key amount and percentage to the matching metric AND actual period.
+Negative computed growth must display a minus sign (e.g. -0.5%), with presentation='signed'.
+Explicitly negative losses also use signed; outflow/loss is only for positive magnitudes.
+On validation failure, inspect expected values and locators and fix ALL reported paragraphs.
+Never remove bindings or drop derived citation IDs while retaining their percentages.
+Only create a report artifact when requested; ordinary industry analysis is a cited answer.
 and repeated calculations. Explain the formula using metric names; the registered computation
 already preserves all inputs. To compute a change in margins, subtract the derived percent
 citation IDs and use output_unit='percentage_points', not the gross-profit USD citation IDs.

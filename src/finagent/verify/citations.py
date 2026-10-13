@@ -127,7 +127,42 @@ def literal_numbers_supported(text: str, quote: str) -> bool:
     return bool(numbers) and all(n.replace(",", "") in available for n in numbers)
 
 
+def percentage_value(text: str, start: int, end: int, raw: str) -> Decimal:
+    value = Decimal(raw)
+    # A positive magnitude in "declined 0.5%" expresses signed negative growth.
+    # Restrict direction to the immediate clause; never flip unrelated margins.
+    before = re.split(r"[;；。,:，：]|(?<!\d)\.(?!\d)", text[:start])[-1][-35:]
+    if value >= 0 and re.search(
+        r"(?:下降|下滑|减少|降低|declin\w*|decreas\w*|fell|fall\w*|reduc\w*)"
+        r"(?:\s|约|了|by|about|approximately|roughly|of)*$",
+        before,
+        re.I,
+    ):
+        return -value
+    return value
+
+
 def verify_answer_citations(
+    answer: Answer,
+    allowed_citation_ids: set[str],
+    store: SQLiteStore,
+) -> Answer:
+    """Report failures across paragraphs together so one retry can repair all of them."""
+    if answer.message:
+        _verify_answer_citations(answer, allowed_citation_ids, store)
+        return answer
+    errors = []
+    for index, claim in enumerate(answer.claims, 1):
+        try:
+            _verify_answer_citations(Answer(claims=[claim]), allowed_citation_ids, store)
+        except CitationVerificationError as exc:
+            errors.append(str(exc).replace("Claim 1", f"Claim {index}", 1))
+    if errors:
+        raise CitationVerificationError(" | ".join(errors))
+    return answer
+
+
+def _verify_answer_citations(
     answer: Answer,
     allowed_citation_ids: set[str],
     store: SQLiteStore,
@@ -171,7 +206,11 @@ def verify_answer_citations(
         for binding in claim.numeric_bindings:
             if binding.text not in claim.text or binding.citation_id not in citations:
                 raise CitationVerificationError(
-                    f"Claim {index}: invalid numeric span/source binding"
+                    f"Claim {index}: invalid numeric span/source binding: "
+                    f"span={binding.text!r}, citation={binding.citation_id}, "
+                    f"span_present={binding.text in claim.text}, "
+                    f"citation_in_claim={binding.citation_id in citations}. "
+                    "Copy the exact displayed span and include its evidence ID in this claim."
                 )
             bound = citations[binding.citation_id]
             if bound.value is None:
@@ -211,6 +250,19 @@ def verify_answer_citations(
                 amount = Decimal(raw)
                 tolerance = Decimal(10) ** -(len(raw.split(".")[1]) if "." in raw else 0) / 2
             expected = bound.value.amount
+            percentage = re.fullmatch(r"(?P<value>-?\d+(?:\.\d+)?)\s*%", binding.text)
+            if percentage:
+                if bound.value.unit != "percent":
+                    raise CitationVerificationError(
+                        f"Claim {index}: percentage binding requires percent evidence; "
+                        f"citation={binding.citation_id}, unit={bound.value.unit}"
+                    )
+                amount = percentage_value(
+                    claim.text,
+                    claim.text.index(binding.text),
+                    claim.text.index(binding.text) + len(binding.text),
+                    percentage.group("value"),
+                )
             if binding.presentation != "signed":
                 direction = local_direction(
                     claim.text,
@@ -224,7 +276,13 @@ def verify_answer_citations(
                     )
                 expected = abs(expected)
             if abs(expected - amount) > tolerance:
-                raise CitationVerificationError(f"Claim {index}: bound numeric value mismatch")
+                raise CitationVerificationError(
+                    f"Claim {index}: bound numeric value mismatch for {binding.text!r}; "
+                    f"citation={binding.citation_id}, expected={expected} {bound.value.unit}, "
+                    f"displayed={amount}, locator={bound.locator.model_dump_json()}. "
+                    "Use the matching company/metric/period citation; signed percentages "
+                    "must retain minus signs. Do not remove bindings to hide a mismatch."
+                )
         # Known source identifiers may start with digits. Remove exact issuer/ticker identifiers,
         # not an arbitrary class of digit-bearing financial quantities.
         numeric_text = claim.text
@@ -334,11 +392,16 @@ def verify_answer_citations(
                     if unit_label in {"percentage points", "percentage-points", "个百分点"}
                     else "percent"
                 )
+                displayed = (
+                    percentage_value(claim.text, match.start(), match.end(), raw)
+                    if expected_unit == "percent"
+                    else Decimal(raw)
+                )
                 if not any(
                     c.value
                     and c.source.source_type == "derived"
                     and c.value.unit == expected_unit
-                    and abs(c.value.amount - Decimal(raw))
+                    and abs(c.value.amount - displayed)
                     <= Decimal("0.5")
                     * Decimal(10) ** -(len(raw.split(".")[1]) if "." in raw else 0)
                     for c in citations.values()

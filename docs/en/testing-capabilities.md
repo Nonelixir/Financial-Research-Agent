@@ -26,7 +26,7 @@ Verified against current implementation: 2026-10-13.
 - HTML tables lack structured row/column/unit extraction; narrative digits only have literal support.
 - Money parsing distinguishes formula/accounting parentheses and supports m/b/k/bn. Narrative outflow bindings still check negative literals and nearby wording without proving table row/column identity; narrative losses may require retries.
 - Copied IDs/spans, wrong metrics/units may exhaust output retries.
-- Frozen published prefixes conflict with retry rewriting; recoverable claims can contain semantic duplicates.
+- Tool progress streams live; answer text publishes after full validation. Retry candidates can be rewritten; failure recovery retains only the latest candidate.
 - Industry/sample coverage and causal extra assertions are not independently proved.
 - Report-request recognition uses bounded keyword patterns, not robust general intent detection.
 - Snapshots exist without complete immutable-version foreign keys, mandatory all-number bindings or semantic verification.
@@ -42,7 +42,7 @@ uv run ruff check src tests eval/runners/financebench_pilot.py
 npm --prefix frontend run build
 ```
 
-Current suite has 97 pytest cases covering facts/differences/verification, references, simulated streams/retries, files, languages, SEC mocks, unsafe AST, tampering and scope.
+Current suite has 99 pytest cases covering facts/differences/verification, references, simulated streams/retries, files, languages, SEC mocks, unsafe AST, tampering and scope.
 Counts evolve; record real runs. Unit tests do not measure model quality; builds do not prove browser usability.
 
 ## Existing evaluation method
@@ -75,3 +75,5 @@ Next priorities are document-year/issuer-FY resolution, publication after full v
 These questions informed development, so results are development regressions, not independent holdout scores. Cache/randomness/early failures affect latency.
 No bare-model/ChatGPT comparison, full FinanceBench or end-to-end report/XLSX benchmark was run; superiority over ChatGPT is unproved.
 Formal review requires fixed budgets/corpus cutoff, full traces, semantic/period/numeric/delivery review, unseen samples and repeated runs.
+
+Answer body is published after complete validation; tool/status progress remains streamed. Ordinary industry answers are concise to fit the normal output budget. The earlier ten-question score predates this publication change.

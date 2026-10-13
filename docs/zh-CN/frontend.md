@@ -17,9 +17,9 @@ Radix、react-markdown/remark-gfm、highlight.js、Lucide 等用于基本组件�
 ## 流式行为
 
 状态按 tool_call_id（无时 phase）分组，展示 active/complete/warning；sources/plan/sample/artifact 动态进入工作台。
-正文不是逐 token 原样输出：后端解析结构化 Answer，只提交已闭合且校验通过的 Claim。
+正文不是逐 token 原样输出：后端解析结构化 Answer，整份校验通过才提交正文。
 所以有时状态推进而正文暂为空；思考和未闭合 JSON 不作为正文发布。
-前缀冻结避免同段反复消失，但模型重试改写前缀仍可能失败，recoverable 恢复有重复段落风险；不是这些体验 bug 已全部修复。
+工具进度实时展示，正文整份校验通过后显示；重试期间正文不冻结，失败恢复只选最新候选，避免合并多个版本造成重复。
 
 ## 引用与产物
 
@@ -44,3 +44,5 @@ English/中文切换写 localStorage，后续请求 Scope.language 同步，计�
 改 SSE 字段要同步 types/API/state；改 UI 文案同步语言表；不要绕过后端校验直接显示模型 scratch text。
 
 普通对话的 message 独立显示；会话持久化同时保存该文本，刷新后仍可阅读，无需虚构引用。
+
+回答正文在整份校验通过后发布，工具/status 进度仍实时展示；重试可改写未发布草稿，失败恢复只保留最新候选。普通行业回答保持简洁以适配普通输出预算。此前 10 题成绩早于这次发布流程变更。

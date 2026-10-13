@@ -117,7 +117,7 @@ def test_closed_claim_stream_is_append_only_and_hides_partial_strings(tmp_path):
     assert committed.update(extended, {"source-1"}, store).claims == [first, second]
 
 
-def test_retry_cannot_replace_a_published_claim(tmp_path, monkeypatch):
+def test_retry_can_replace_unpublished_candidate(tmp_path, monkeypatch):
     store, scope, hit = evidence(tmp_path)
     calls = 0
     first = Claim(text="已核对的需求描述。", citation_ids=["source-1"])
@@ -148,13 +148,14 @@ def test_retry_cannot_replace_a_published_claim(tmp_path, monkeypatch):
 
     snapshots = asyncio.run(collect())
     visible = [item for item in snapshots if item.claims]
-    assert calls == 3
+    assert calls == 2
     assert visible[-1].status == "complete"
-    assert len(visible[0].claims) == 1
+    assert len(visible) == 1
+    assert visible[-1].claims[0].text == "试图替换已展示文字"
     for previous, current in pairwise(visible):
         assert current.claims[: len(previous.claims)] == previous.claims
     assert all(
-        "错误草稿" not in c.text and "试图替换" not in c.text for s in visible for c in s.claims
+        "错误草稿" not in c.text for s in visible for c in s.claims
     )
 
 
