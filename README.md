@@ -2,6 +2,8 @@
 
 [English](README.en.md)
 
+本项目由 **周嘉翔 / zhoujiaxiang** 使用 **gpt-6.1-sol** 进行开发。
+
 轻量级、来源优先的金融研究工作台。模型自主多轮调用 SEC、公开网页、检索、财务数据和计算工具；公司与年份无需预选，strict 才限制范围。可交付带来源的 XLSX 和 Markdown，普通回答不是产物。
 
 当前为单用户原型：FastAPI + Pydantic AI + SQLite WAL/FTS5 + 每会话文件目录，React 使用 assistant-ui 和 AI Elements。Python/shell 尚不可执行，财年语义、数字校验和重试恢复仍有已知缺陷。不能据此承诺无幻觉或超越 ChatGPT。

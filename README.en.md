@@ -2,6 +2,8 @@
 
 [中文](README.md)
 
+This project was developed by **周嘉翔 / zhoujiaxiang** using **gpt-6.1-sol**.
+
 A lightweight, provenance-first financial research workbench. The model chooses SEC, public web, retrieval, financial-data and computation tools over multiple turns. Companies/years are optional preferences; strict scope constrains access. Real XLSX and Markdown deliverables are supported; ordinary answers are not artifacts.
 
 This is a single-user prototype: FastAPI, Pydantic AI, SQLite WAL/FTS5 and session file directories, with React/assistant-ui/AI Elements.
