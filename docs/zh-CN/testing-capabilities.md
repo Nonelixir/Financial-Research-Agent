@@ -2,7 +2,7 @@
 
 [English](../en/testing-capabilities.md) · [README](../../README.md)
 
-按当前代码核对：2026-10-13。
+按当前代码核对：2026-10-14。
 
 ## 当前能力分级
 
@@ -42,7 +42,7 @@ uv run ruff check src tests eval/runners/financebench_pilot.py
 npm --prefix frontend run build
 ```
 
-当前 99 项 pytest；覆盖事实/差分/核验、引用、模拟流式/重试、文件限制、语言、SEC mock、公式不安全 AST、输入/结果篡改、scope 等。
+最近一次记录为 99 项 pytest；覆盖事实/差分/核验、引用、模拟流式/重试、文件限制、语言、SEC mock、公式不安全 AST、输入/结果篡改、scope 等。
 测试数量随代码变化；记录实际运行，不以此代替真实模型效果。构建只证明编译，不证明浏览器操作正确。
 
 ## 现有评测方法
@@ -57,6 +57,8 @@ npm --prefix frontend run build
 当前 API 没有 token/cost 数据，不填写 0；judge 的数字/引用 accession 比较不能代替文本蕴含评审。
 
 ```bash
+uv run python eval/runners/prepare_financebench.py \
+  --output eval/dataset/financebench-pilot-10.json
 uv run python eval/runners/financebench_pilot.py \
   --sample eval/dataset/financebench-pilot-10.json \
   --output eval/results/new-run \
@@ -77,3 +79,9 @@ baseline 与旧 v4 完整核心正确均 6/10。当前 verification-opt-v1 完�
 下一次正式评审必须固定预算/资料截止、保留原始过程、核对语义/期间/数值/交付并使用未见样本与重复运行。
 
 回答正文在整份校验通过后发布，工具/status 进度仍实时展示；重试可改写未发布草稿，失败恢复只保留最新候选。普通行业回答保持简洁以适配普通输出预算。此前 10 题成绩早于这次发布流程变更。
+
+## 最新提交状态
+
+更新日期 2026-10-14。准备命令下载固定 GitHub 数据 blob、核对 SHA-256，再按原始顺序以 seed=42 选题；只写入本地，不覆盖已有题集。已有文件可直接复用或使用新路径，新克隆可据此准备输入而不在仓库再分发第三方题目。金标留在评测端，HTTP runner 记录轨迹，不自动给出语义判定。
+
+历史 9/10 成绩早于后续回答发布、报告/XLSX 强制交付和数字展示改动。本次提交未重跑回归测试或模型评测；编译、Ruff 和前端构建检查说明打包与静态正确性，不代表当前模型准确率。

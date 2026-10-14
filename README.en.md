@@ -36,7 +36,7 @@ For trusted-network access, bind 0.0.0.0 behind proper controls. No authenticati
 
 ## Current documentation
 
-Verified: 2026-10-13. Each module has Chinese and English versions describing current implementation only.
+Verified: 2026-10-14. Each module has Chinese and English versions describing current implementation only.
 Transitional designs, repair histories and evaluation-report Markdown have been removed. Code/machine schemas are authoritative; keep both languages synchronized.
 
 | Module | English | 中文 |
@@ -80,6 +80,28 @@ tests/ eval/              Tests, synthetic example and evaluation runners
 Runtime data defaults to `.data/`; SEC caches are in SQLite, session files in `.data/workspaces/<thread_id>/`.
 The sibling `sec-filing-room` is obsolete, not this running implementation or documentation set.
 
+## Design decisions
+
+- A model-driven tool loop chooses companies, filings and computations on demand, rather than fetching every metric before answering. Pydantic AI supplies structured output and bounded retries.
+- SEC/XBRL and filing text are primary evidence. SQLite stores citations and exact locators; derived values retain their formula and input IDs for replay before publication.
+- Answers publish only after validation. Greetings use a separate conversational field; broad analyses require a saved Markdown report and verified XLSX from the current run.
+- Decimal computation keeps full precision, while `compute_financial.display.text` rounds presentation to two places by default. USD amounts use consistent million/billion scales; display values never replace calculation inputs.
+- One FastAPI process, SQLite and local files keep setup small. Arbitrary Python/shell execution is disabled. Fiscal-year resolution, semantic entailment and production multi-user support remain limitations.
+
+## Run the evaluation harness
+
+Start the service using the setup above and leave it running. In a second terminal at the repository root, prepare the fixed ten-question sample from the pinned public FinanceBench dataset, then run the HTTP harness:
+
+```bash
+uv run python eval/runners/prepare_financebench.py \
+  --output eval/dataset/financebench-pilot-10.json
+uv run python eval/runners/financebench_pilot.py \
+  --sample eval/dataset/financebench-pilot-10.json \
+  --output eval/results/submission-run --timeout 180 --concurrency 2
+```
+
+The preparation command verifies the upstream SHA-256 and selects ten original rows with seed 42. The dataset is downloaded locally, not redistributed in this repository; an existing sample is never overwritten. The harness sends only questions and target document names to the agent, keeping gold answers/evidence on the evaluator side. It saves metadata, traces, answers and source records; it does not automatically assign semantic accuracy. Use a fresh output directory for each run. Review completeness, target period, numerical correctness and source support against `gold.jsonl`. These commands use live SEC/model calls and populate the local cache. See [runner instructions](eval/runners/README.en.md) for file formats and scoring limits.
+
 ## Verification and limits
 
 ```bash
@@ -88,13 +110,15 @@ uv run ruff check src tests eval/runners/financebench_pilot.py
 npm --prefix frontend run build
 ```
 
-Current tests: 99 passing; Ruff passes. The fixed live-model FinanceBench pilot delivered 9/10 correct complete core answers (90%) in verification-opt-v1 versus 6/10 in baseline and previous v4.
+The last recorded regression suite had 99 passing tests. The fixed live-model FinanceBench pilot delivered 9/10 correct complete core answers (90%) in verification-opt-v1 versus 6/10 in baseline and previous v4.
 This task stopped after one iteration upon reaching its 80% target. Mean time: 36.448 seconds versus v4 44.85 and baseline 70.39 seconds.
 Model/budgets and questions/gold stayed unchanged. Ulta target-period ambiguity remains incorrect. This single development regression with mixed warm caches and stochastic output does not establish accuracy on unseen questions.
 Raw JSON/events/citations/reviews remain locally in `eval/results/` and are excluded from the public repository. The fixed FinanceBench sample is also excluded pending redistribution review.
-The public runner requires a separately prepared, permitted sample matching its input schema. These scores are local development results, not an independently auditable benchmark bundled with this repository.
+The preparation command above creates the sample locally; the runner also accepts separately prepared, permitted samples matching its input schema. These scores are local development results, not an independently auditable benchmark bundled with this repository.
 No full benchmark, bare-model/ChatGPT comparison or full report-delivery benchmark exists.
 See testing/capabilities for methodology; passing tests do not establish investment correctness.
+
+The recorded pilot predates the subsequent publication, mandatory report/XLSX and numeric-presentation changes. Neither the model benchmark nor the regression suite was rerun for the 2026-10-14 submission update; 90% is not a measured score for this latest commit. This update was checked with Python compilation, Ruff and a frontend production build.
 
 ## Publication scope and licensing
 

@@ -491,7 +491,11 @@ class ResearchTools:
 
         @traced
         async def compute_financial(
-            ctx: Any, expression: str, inputs: dict[str, str], output_unit: str = "ratio"
+            ctx: Any,
+            expression: str,
+            inputs: dict[str, str],
+            output_unit: str = "ratio",
+            decimal_places: Annotated[int, Field(ge=0, le=4)] = 2,
         ) -> dict:
             """Calculate + - * / over named numeric citation IDs. Constants are method parameters.
 
@@ -499,12 +503,22 @@ class ResearchTools:
             Use output_unit='USD' for currency sums/differences, 'percentage_points' for
             subtracting percentage margins. Inputs must have value fields, not just text quotes.
             Returns a registered derived citation and replayable input/formula record, not shell.
+            display.text is rounded for prose (default 2 decimals, maximum 4); USD uses
+            million/billion when appropriate. Bind the display span to this citation ID.
+            Further calculations use citation IDs, never rounded display values.
             """
+            from finagent.compute.display import display_result
             from finagent.compute.evidence import compute_evidence
 
+            if type(decimal_places) is not int or not 0 <= decimal_places <= 4:
+                raise ValueError("Display decimal places must be an integer between 0 and 4")
             citation, record = compute_evidence(self.deps, expression, inputs, output_unit)
             self.evidence([citation])
-            return {"citation": citation.model_dump(mode="json"), "computation": record}
+            return {
+                "display": display_result(citation.value.amount, output_unit, decimal_places),
+                "citation": citation.model_dump(mode="json"),
+                "computation": record,
+            }
 
         @traced
         async def search_filings(

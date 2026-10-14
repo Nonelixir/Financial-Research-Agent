@@ -2,7 +2,7 @@
 
 [中文](../zh-CN/provenance-validation.md) · [README](../../README.en.md)
 
-Verified against current implementation: 2026-10-13.
+Verified against current implementation: 2026-10-14.
 
 ## Data model and assurance levels
 
@@ -55,3 +55,7 @@ Answer.message is for greetings, capabilities, clarification and scope explanati
 Answer validation collects the first error from each paragraph together. Numeric-binding errors report citation, expected value/unit, displayed value and original locator to help repair company/period mismatches in one retry. Percentages immediately following decline/reduction wording compare as negative growth magnitudes; unrelated margins are not re-signed. Explicit negatives use signed.
 
 Answer body is published after complete validation; tool/status progress remains streamed. Ordinary industry answers are concise to fit the normal output budget. The earlier ten-question score predates this publication change.
+
+## Presentation checks
+
+Financial claims with more than four decimal places are rejected before publication. The prompt normally requests two places, and `compute_financial.display.text` supplies a bounded rounded value. Numeric bindings still compare the displayed precision and monetary scale against the original registered value; evidence and computation records are unchanged. USD display places the currency before the amount (`USD 751.40 million`) so it matches the money parser. This is presentation validation, not proof of financial semantics.

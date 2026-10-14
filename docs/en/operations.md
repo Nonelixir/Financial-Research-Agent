@@ -2,7 +2,7 @@
 
 [中文](../zh-CN/operations.md) · [README](../../README.en.md)
 
-Verified against current implementation: 2026-10-13.
+Verified against current implementation: 2026-10-14.
 
 ## Setup and startup
 
@@ -74,3 +74,9 @@ Use SQLite online backup or a consistent stopped-service backup. Copying a live 
 Back up workspace files too; restore both and verify artifact hashes. Do not commit runtime data, .env or logs.
 File quotas/network checks are not a whole-application sandbox. No isolated execution, global hard disk/CPU limits, auth or complete audit administration.
 Deleting threads retains disk files; cache/snapshot retention is manual. Check references before cleanup; do not remove files still referenced by database artifacts.
+
+## Evaluation setup and submission state
+
+The project [English README](../../README.en.md) documents design decisions and the HTTP harness. `eval/runners/prepare_financebench.py` downloads the pinned public dataset, validates its checksum and creates the seeded ten-question sample locally. Start the single service process, then run the harness in a separate terminal with a fresh output directory. No model secret or runtime data is committed.
+
+The 2026-10-14 update includes readable numeric output and corresponding report/answer validation. Python compilation, Ruff and the frontend production build were checked; model evaluations and regression tests were not rerun for this update. Historical test/pilot scores are explicitly separated from the latest code state.

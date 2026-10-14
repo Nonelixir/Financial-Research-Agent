@@ -2,7 +2,7 @@
 
 [English](../en/financial-computation.md) · [README](../../README.md)
 
-按当前代码核对：2026-10-13。
+按当前代码核对：2026-10-14。
 
 ## 指标与口径
 
@@ -43,6 +43,14 @@ Decimal 精度 34；零分母报错。加减单位一致；乘法仅一边可有
 输出 USD/ratio/percent/percentage_points/days；百分率展示值按无量纲参与下一步运算，但不自动进行 ratio↔percent 的数值缩放。
 
 ## 示例与来源链
+
+### 展示精度
+
+`compute_financial` 接受整数 `decimal_places`，范围 0..4，默认 2。返回 `display` 包含 `text`、`amount`、`unit`、`scale`、`decimal_places`、`rounded`；citation 和计算记录仍保留原始完整精度。展示采用 ROUND_HALF_UP，去掉负零。
+
+例如 percent 结果 `7.67781155` 展示为 `7.68%`，`751400000` USD 展示为 `USD 751.40 million`。USD 绝对值达到 1000000 按 million 展示，达到 1000000000 按 billion 展示。绑定精确展示文本与原始 citation ID；后续运算使用该 ID，不用四舍五入的字符串。回答和报告默认两位小数，财务 claims 中超过四位小数会被拒绝。此展示函数不改变保存的来源值和工作簿数据。
+
+经营现金流/收入使用 `cash/revenue*100`、`output_unit='percent'`。仅格式化货币时用 `expression='x'`、`output_unit='USD'`，由工具自动缩放展示，不改变实际金额。
 
 ```text
 growth: (current/prior-1)*100 → percent

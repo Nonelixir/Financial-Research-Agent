@@ -2,7 +2,7 @@
 
 [中文](../zh-CN/sessions-artifacts.md) · [README](../../README.en.md)
 
-Verified against current implementation: 2026-10-13.
+Verified against current implementation: 2026-10-14.
 
 ## Persistence and context
 
@@ -49,3 +49,7 @@ Generic text publication has no financial verification. Work files are not autom
 Back up both a consistent SQLite snapshot and all workspace files. Thread deletion does not reclaim disk; archive cleanup is an explicit operational action.
 
 Conversational Answer.message is included in messages.content; it creates neither research evidence nor artifacts.
+
+## Report delivery and presentation
+
+Broad analyses require a current-run saved Markdown report and verified XLSX before completion. Published reports follow the same numeric presentation and binding rules as answers: normally two decimal places, at most four, with readable USD scales. The display helper does not round the saved source values or workbook data. The workbook includes supported verified metrics and provenance, but may not include every narrative number or derived report ratio.

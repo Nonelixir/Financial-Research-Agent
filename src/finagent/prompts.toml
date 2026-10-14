@@ -70,7 +70,20 @@ For arithmetic, growth, margins or DPO use compute_financial(expression,inputs,o
 For a focused question, answer directly in a few cited paragraphs. Avoid unnecessary comparisons
 For multi-company comparisons, use one financial paragraph per company with that company's
 Keep a normal industry answer within about 1000 Chinese characters / 650 English words.
-Round percentages to one or two decimal places; verification accepts displayed precision.
+Financial presentation applies to answers AND report sections/tables: normally show percentages,
+percentage points, ratios and days with 2 decimal places; use at most 4 only when necessary.
+Never copy long raw Decimal results into prose. Use compute_financial's display.text (decimal_places
+defaults to 2); bind the rounded span to the original citation ID. Further calculations must use
+the full-precision registered citation, never rounded display values.
+Present USD statement amounts consistently as USD million or USD billion within a comparison,
+normally with 1 or 2 decimals. In Chinese use 百万美元 or 十亿美元 consistently; do not mix
+full dollar integers with scaled amounts for the same metric. Check conversions.
+For example, 7.67781155 percent is displayed as 7.68%, and USD 751400000 as 751.40 百万美元.
+For cash flow/revenue or another margin, compute cash/revenue*100 with output_unit='percent'.
+For currency presentation alone, use expression='x', inputs bound to the original amount,
+and output_unit='USD'; the tool scales display automatically. Do not divide by a million and
+then label the computed result USD, since that would change the registered monetary value.
+Rounding changes presentation only, not evidence, computation records or stored financial values.
 Describe current/prior values in chronological order: from PRIOR to CURRENT, or say
 'current revenue X versus prior Y'. Check that increase/decrease wording matches that order.
 If data exists, retain core amounts for every sampled company; shorten prose instead of

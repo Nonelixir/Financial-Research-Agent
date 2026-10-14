@@ -35,7 +35,7 @@ LLM_API_MODE=responses
 
 ## 当前文档目录
 
-核对日期：2026-10-13。仅维护当前实现，每个模块独立中英文；不保留过渡方案、修复过程或评测报告 Markdown。
+核对日期：2026-10-14。仅维护当前实现，每个模块独立中英文；不保留过渡方案、修复过程或评测报告 Markdown。
 以下为统一入口，代码/机器 schema 与文档冲突时以代码为准，并同步修订双语版本。
 
 | 模块 | 中文 | English |
@@ -79,6 +79,28 @@ tests/ eval/              测试、自建示例与评测 runner
 运行数据位于 `.data/`（可配置）；共享 SEC 缓存在 SQLite，会话文件在默认 `.data/workspaces/<thread_id>/`。
 同级 `sec-filing-room` 是已废弃的旧项目，不是运行实现，也不属于这套文档。
 
+## 设计取舍
+
+- 模型按需选择公司、财报和计算工具，避免回答前预取全部指标；Pydantic AI 提供结构化输出与有界重试。
+- SEC/XBRL 和财报原文为主要来源，SQLite 保存引用和精确定位；派生值保留公式及输入引用，发布前重放核验。
+- 回答整份校验通过后发布；问候走单独的对话字段，综合分析要求本轮保存 Markdown 报告和核验 XLSX。
+- Decimal 保留完整计算精度，`compute_financial.display.text` 默认展示两位小数；USD 自动按百万/十亿缩放，后续计算仍用原始引用。
+- 单 FastAPI 进程、SQLite 和会话文件降低部署成本；不开放任意 Python/shell。财年辨识、语义核验和生产多用户能力仍有限。
+
+## 运行评测 harness
+
+按快速开始启动服务并保持运行，在第二个终端、项目根目录执行：
+
+```bash
+uv run python eval/runners/prepare_financebench.py \
+  --output eval/dataset/financebench-pilot-10.json
+uv run python eval/runners/financebench_pilot.py \
+  --sample eval/dataset/financebench-pilot-10.json \
+  --output eval/results/submission-run --timeout 180 --concurrency 2
+```
+
+准备命令从固定版本的 FinanceBench 公共数据下载，核对 SHA-256，再以 seed=42 选取 10 条原题；数据只在本地生成，不随仓库再分发，也不覆盖已有题集。HTTP runner 只向 Agent 发送问题和目标文件名，金标及证据保留在评测端；输出包含配置、事件、回答和来源，不自动给出语义准确率。每次使用新输出目录，对照 `gold.jsonl` 人工核对完成状态、期间、数值和来源支持。这些命令会调用真实模型和 SEC，并写入本地缓存。格式与计分边界见 [runner 文档](eval/runners/README.md)。
+
 ## 验证与诚实边界
 
 ```bash
@@ -87,13 +109,15 @@ uv run ruff check src tests eval/runners/financebench_pilot.py
 npm --prefix frontend run build
 ```
 
-当前 99 项测试通过，Ruff 通过。真实模型固定 FinanceBench 10 题，当前 verification-opt-v1 完整核心正确 9/10（90%），原版和旧 v4 为 6/10。
+最近一次记录的回归检查为 99 项测试通过。真实模型固定 FinanceBench 10 题，verification-opt-v1 完整核心正确 9/10（90%），原版和旧 v4 为 6/10。
 本轮一个迭代版本达到 80% 目标后停止；当前平均 36.448 秒、旧 v4 44.85 秒、原版 70.39 秒。
 模型与预算、题目和金标不变；剩余错题为 Ulta 目标期间歧义。此为单次开发集回归，暖缓存和随机性影响结果，不代表未见题准确率。
 原始 JSON、事件、来源与复核仅在本地 `eval/results/` 保留，不随公开仓库发布；FinanceBench 固定题集亦待再分发许可审查，不包含在本仓库。
-公开 runner 需要另行准备符合其输入格式、获准使用的题集。上述分数是本地开发集结果，不是随仓库附带的独立可审计成绩。
+上述准备命令可在本地生成固定题集；公开 runner 也支持另行准备符合其格式、获准使用的题集。上述分数是本地开发集结果，不是随仓库附带的独立可审计成绩。
 无完整基线/ChatGPT 对照，未测全量基准和完整研报交付。
 具体方法与限制见测试能力模块，测试通过不证明投资结论正确。
+
+该评测成绩早于后续的发布流程、报告/XLSX 强制交付和数字展示改动。2026-10-14 提交更新未重跑模型评测或回归测试，90% 不能当作最新提交的已测准确率。本次更新使用 Python 编译、Ruff 和前端生产构建检查。
 
 ## 发布范围与许可
 

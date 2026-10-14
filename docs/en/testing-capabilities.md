@@ -2,7 +2,7 @@
 
 [中文](../zh-CN/testing-capabilities.md) · [README](../../README.en.md)
 
-Verified against current implementation: 2026-10-13.
+Verified against current implementation: 2026-10-14.
 
 ## Capability levels
 
@@ -42,7 +42,7 @@ uv run ruff check src tests eval/runners/financebench_pilot.py
 npm --prefix frontend run build
 ```
 
-Current suite has 99 pytest cases covering facts/differences/verification, references, simulated streams/retries, files, languages, SEC mocks, unsafe AST, tampering and scope.
+The last recorded suite had 99 pytest cases covering facts/differences/verification, references, simulated streams/retries, files, languages, SEC mocks, unsafe AST, tampering and scope.
 Counts evolve; record real runs. Unit tests do not measure model quality; builds do not prove browser usability.
 
 ## Existing evaluation method
@@ -57,6 +57,8 @@ Files retain metadata (including sample-file and source-code SHA256), gold, per-
 Token/cost are unavailable, never zero. Numeric/accession judges do not replace entailment review.
 
 ```bash
+uv run python eval/runners/prepare_financebench.py \
+  --output eval/dataset/financebench-pilot-10.json
 uv run python eval/runners/financebench_pilot.py \
   --sample eval/dataset/financebench-pilot-10.json \
   --output eval/results/new-run \
@@ -77,3 +79,9 @@ No bare-model/ChatGPT comparison, full FinanceBench or end-to-end report/XLSX be
 Formal review requires fixed budgets/corpus cutoff, full traces, semantic/period/numeric/delivery review, unseen samples and repeated runs.
 
 Answer body is published after complete validation; tool/status progress remains streamed. Ordinary industry answers are concise to fit the normal output budget. The earlier ten-question score predates this publication change.
+
+## Latest submission update
+
+Updated 2026-10-14. The preparation command fetches the pinned GitHub dataset blob, verifies SHA-256 and samples the unchanged original row order with seed 42. It writes locally and refuses to overwrite an existing sample; reuse the existing file or select a new path. This creates the required input in a fresh clone without bundling third-party questions. Gold remains evaluator-side, and the HTTP runner records traces rather than assigning semantic verdicts automatically.
+
+The historical 9/10 result predates the subsequent answer-publication, required report/XLSX and numeric-display updates. No new regression tests or model benchmark were run for this submission update. Compilation, Ruff and frontend build checks cover packaging and static correctness, not current model accuracy.

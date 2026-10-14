@@ -177,6 +177,13 @@ def _verify_answer_citations(
             "amounts; use claims with registered evidence for financial findings"
         )
     for index, claim in enumerate(answer.claims, 1):
+        if any(re.search(r"\.\d{5,}$", number) for number in substantive_numbers(claim.text)):
+            raise CitationVerificationError(
+                f"Claim {index}: financial display has more than 4 decimal places. "
+                "Use compute_financial display.text; normally use 2 decimals, at most 4. "
+                "Update numeric_bindings.text to the rounded span, retaining the original "
+                "citation ID and full-precision evidence."
+            )
         unknown = set(claim.citation_ids) - allowed_citation_ids
         if unknown:
             suggestions = {

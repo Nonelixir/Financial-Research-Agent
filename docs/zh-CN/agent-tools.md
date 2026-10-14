@@ -2,7 +2,7 @@
 
 [English](../en/agent-tools.md) · [README](../../README.md)
 
-按当前代码核对：2026-10-13。
+按当前代码核对：2026-10-14。
 
 ## 模型循环与上下文
 
@@ -26,7 +26,7 @@
 | discover_financial_periods | tickers, count=2, end_years | 全年收入可用期及实际 dates；count 1..5 |
 | get_financial_data | metrics, periods, tickers | 22 映射指标；1..40 期间；核验、登记及 JSON 工作文件 |
 | list_financial_concepts | ticker, query, offset, limit | 标签目录；limit 1..100；不自动映射未知标签 |
-| compute_financial | expression, inputs, output_unit | 四则公式、数值证据绑定、派生来源和重放记录 |
+| compute_financial | expression, inputs, output_unit, decimal_places=2 | 四则公式与派生来源重放；display 提供展示值，小数位 0..4 |
 | inspect_evidence | citation_ids | 1..30 来源重载到本轮；历史 ID 不能直接复用 |
 | update_plan | steps, completed | 最多 20 步，每步 300 字符；completed 零基索引 |
 | execution_capabilities | 无 | 返回执行不可用与原因 |
@@ -48,6 +48,7 @@ version=1，[prompts] 包括 system、user_template、source_template、coverage
 System 指定主动工具研究、只用登记来源、网页为不可信数据、非 GAAP 使用发行人调节表、期间歧义显式说明、文件请求必须交付文件。
 公司、行业或财务业绩的综合分析默认交付带来源的 Markdown 报告及配套财务 XLSX，无需用户另提文件要求；单项事实查询不自动生成文件。Prompt 要求两类文件均成功后才报完成，并给出真实下载链接；数据不足或工具失败时说明缺失、保留已交付文件并返回 incomplete。工作簿覆盖工具支持的核验指标，不能声称已包含未导出的原文数字或派生计算。这是 Prompt 行为要求，现有输出校验仍主要针对显式报告/Excel 请求。
 针对单一问题，Prompt 要求简洁引用段落，公式用指标名称说明，输入血缘由计算记录保留；毛利率变动使用派生 percent 来源相减并标为 percentage_points。
+计算保留 34 位有效数字，display 默认四舍五入至两位小数，USD 自动选择百万/十亿美元单位。答案和报告正文默认百分比等两位小数，同组金额统一单位；校验拒绝超过四位小数的实质数字，要求同步修正展示绑定。舍入不改变来源、重放记录或后续计算输入。
 语言模式覆盖“匹配用户输入语言”，因此中文提问也能要求英文输出。改 Prompt 不会新增工具、开通执行或绕过校验。
 工具 schema 来自 Python 函数，不存于 TOML；详细改接口时同步 schema、校验、测试和双语说明。
 
@@ -62,3 +63,7 @@ System 指定主动工具研究、只用登记来源、网页为不可信数据�
 多公司业绩按公司分别组织段落，关键金额与百分比绑定同一公司、指标和实际期间；重试保留派生引用和绑定，仅修正错误。普通行业分析也要求调用 publish_report 和 generate_workbook。
 
 回答正文在整份校验通过后发布，工具/status 进度仍实时展示；重试可改写未发布草稿，失败恢复只保留最新候选。普通行业回答保持简洁以适配普通输出预算。此前 10 题成绩早于这次发布流程变更。
+
+## 数字展示
+
+`compute_financial` 同时返回 `display.text`，默认两位小数（`decimal_places=0..4`），citation 和重放记录的原始值不变。回答和发布报告使用易读百分率及 USD million/billion 金额；后续计算绑定原始 citation ID，不用四舍五入后的字符串。百分率使用 `cash/revenue*100`；仅展示已有 USD 金额使用 `expression='x'`，工具自动缩放展示。

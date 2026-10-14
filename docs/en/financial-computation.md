@@ -2,7 +2,7 @@
 
 [中文](../zh-CN/financial-computation.md) · [README](../../README.en.md)
 
-Verified against current implementation: 2026-10-13.
+Verified against current implementation: 2026-10-14.
 
 ## Metrics and accounting scope
 
@@ -43,6 +43,14 @@ Decimal precision 34; zero denominator fails. Addition/subtraction require match
 Output units are USD/ratio/percent/percentage_points/days. Display percentages participate in subsequent arithmetic as dimensionless values, without automatic ratio↔percent rescaling.
 
 ## Examples and lineage
+
+### Display precision
+
+`compute_financial` accepts `decimal_places` as an integer from 0 to 4 (default 2). Its `display` object contains `text`, `amount`, `unit`, `scale`, `decimal_places` and `rounded`; the citation and computation record still retain the original full-precision value. Presentation uses ROUND_HALF_UP and suppresses negative zero.
+
+For example, a percent result of `7.67781155` displays as `7.68%`, and `751400000` USD displays as `USD 751.40 million`. USD switches to million at an absolute value of 1,000,000 and billion at 1,000,000,000. Bind the exact displayed span to the original citation ID; use that ID, rather than rounded strings, for subsequent arithmetic. Reports and answers normally use two places; financial claims with more than four decimal places are rejected. Saved source values and workbook data are not rounded by this display helper.
+
+Cash-flow/revenue uses `cash/revenue*100` with `output_unit='percent'`. To format an existing currency value, use `expression='x'` with `output_unit='USD'`; display scaling is automatic and does not change the monetary value.
 
 ```text
 growth: (current/prior-1)*100 → percent

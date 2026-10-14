@@ -2,7 +2,7 @@
 
 [中文](../zh-CN/agent-tools.md) · [README](../../README.en.md)
 
-Verified against current implementation: 2026-10-13.
+Verified against current implementation: 2026-10-14.
 
 ## Model loop and context
 
@@ -26,7 +26,7 @@ Tool results feed later model turns. `update_plan` is a public checklist, not a 
 | discover_financial_periods | tickers, count=2, end_years | Available annual revenue periods and actual dates; count 1..5 |
 | get_financial_data | metrics, periods, tickers | 22 mapped metrics; 1..40 periods; verification, citations, JSON work file |
 | list_financial_concepts | ticker, query, offset, limit | Concepts; limit 1..100; unknown tags are not automatically mapped |
-| compute_financial | expression, inputs, output_unit | Arithmetic, bound evidence, derived citation and replay record |
+| compute_financial | expression, inputs, output_unit, decimal_places=2 | Arithmetic and replayable lineage; display rounds to 0..4 decimals |
 | inspect_evidence | citation_ids | Reload 1..30 citations into this run before historical reuse |
 | update_plan | steps, completed | Up to 20 steps of 300 characters; zero-based completed indices |
 | execution_capabilities | none | Execution unavailable and its reason |
@@ -48,6 +48,7 @@ version=1; [prompts] contains system, user_template, source_template, coverage, 
 System instructions cover active research, registered evidence only, untrusted web content, issuer non-GAAP reconciliation, explicit period ambiguity and real file delivery.
 Substantive company, industry and financial-performance analyses automatically deliver a source-checked Markdown report and accompanying financial XLSX without an explicit file request. Focused factual questions do not trigger automatic files. The prompt requires both deliveries before completion and real download links; unavailable tools, failures or insufficient data require incomplete status while retaining successful files. Workbooks contain supported verified metrics, not necessarily narrative-only figures or derived calculations. This is a prompt requirement; existing output checks primarily enforce explicitly requested reports/Excel files.
 For focused questions, the prompt requests concise cited paragraphs and metric names in formula explanations. Computation records retain input lineage; margin changes subtract derived percent citations and use percentage_points.
+Computation retains 34 significant digits; display defaults to two decimals with half-up rounding and scales USD to millions/billions. Answers and report prose use consistent amount units. Validation rejects substantive numbers with more than four decimals and requests updated bindings. Rounding does not change evidence, replay records or subsequent computation inputs.
 Language mode overrides matching the question language. Prompt edits cannot create tools, enable execution or bypass validation.
 Python function signatures define tool schemas; interface changes must update schema, validation, tests and both language documents.
 
@@ -62,3 +63,7 @@ Exact greetings return a conversational reply directly. The prompt directs capab
 Multi-company financial comparisons use separate company paragraphs with amounts/percentages bound to matching issuer, metric and actual period. Retries retain derived citations and bindings while repairing errors. Ordinary industry analysis also requires publish_report and generate_workbook.
 
 Answer body is published after complete validation; tool/status progress remains streamed. Ordinary industry answers are concise to fit the normal output budget. The earlier ten-question score predates this publication change.
+
+## Numeric presentation
+
+`compute_financial` returns `display.text` with two decimal places by default (`decimal_places=0..4`), alongside the unchanged citation and replay record. Answers and published reports use readable percentages and USD million/billion amounts. Further calculations bind original citation IDs, never rounded display strings. Use `cash/revenue*100` for a percent, and `expression='x'` to display an existing USD amount with automatic scaling.
