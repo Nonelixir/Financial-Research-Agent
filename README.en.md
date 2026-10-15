@@ -38,11 +38,12 @@ For trusted-network access, bind 0.0.0.0 behind proper controls. No authenticati
 
 ## Current documentation
 
-Verified: 2026-10-14. Each module has Chinese and English versions describing current implementation only.
+Verified: 2026-10-15. Each module has Chinese and English versions describing current implementation only.
 Transitional designs, repair histories and evaluation-report Markdown have been removed. Code/machine schemas are authoritative; keep both languages synchronized.
 
 | Module | English | 中文 |
 | --- | --- | --- |
+| Complete processing flow | [Read](docs/en/processing-flow.md) | [通俗详解](docs/zh-CN/processing-flow.md) |
 | Architecture | [Read](docs/en/architecture.md) | [整体架构](docs/zh-CN/architecture.md) |
 | Agent, tools and prompts | [Read](docs/en/agent-tools.md) | [Agent 与工具、Prompt](docs/zh-CN/agent-tools.md) |
 | SEC, web and retrieval | [Read](docs/en/sources-retrieval.md) | [SEC、网页与检索](docs/zh-CN/sources-retrieval.md) |
@@ -86,7 +87,7 @@ The sibling `sec-filing-room` is obsolete, not this running implementation or do
 
 - A model-driven tool loop chooses companies, filings and computations on demand, rather than fetching every metric before answering. Pydantic AI supplies structured output and bounded retries.
 - SEC/XBRL and filing text are primary evidence. SQLite stores citations and exact locators; derived values retain their formula and input IDs for replay before publication.
-- Answers publish only after validation. Greetings use a separate conversational field; broad analyses require a saved Markdown report and verified XLSX from the current run.
+- Answers publish only after validation. Greetings use a separate conversational field; the prompt requires broad analyses to save a current-run Markdown report and verified XLSX, while hard gates primarily cover explicit report/Excel requests.
 - Decimal computation keeps full precision, while `compute_financial.display.text` rounds presentation to two places by default. USD amounts use consistent million/billion scales; display values never replace calculation inputs.
 - One FastAPI process, SQLite and local files keep setup small. Arbitrary Python/shell execution is disabled. Fiscal-year resolution, semantic entailment and production multi-user support remain limitations.
 

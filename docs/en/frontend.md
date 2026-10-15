@@ -2,7 +2,7 @@
 
 [中文](../zh-CN/frontend.md) · [README](../../README.en.md)
 
-Verified against current implementation: 2026-10-13.
+Verified against current implementation: 2026-10-15.
 
 ## Technology and responsibilities
 
@@ -46,3 +46,7 @@ SSE changes require coordinated types/parser/state changes; UI copy needs both l
 Conversational message text renders separately and is also saved in persistent message content, remaining visible after reload without fabricated citations.
 
 Answer body is published after complete validation; tool/status progress remains streamed. Ordinary industry answers are concise to fit the normal output budget. The earlier ten-question score predates this publication change.
+
+## Yellow notices and terminal state
+
+`AnswerBody` renders `answer.caveats` in order as `.notice` paragraphs. The model supplies normal research caveats; fallback/error code may supply fixed messages. Yellow color does not establish completion, failure or validation. Body content comes from claims or conversational message; recovery snapshots can be incomplete. See the [complete processing flow](processing-flow.md) for SSE, cancellation and persistence.

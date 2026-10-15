@@ -37,11 +37,12 @@ LLM_API_MODE=responses
 
 ## 当前文档目录
 
-核对日期：2026-10-14。仅维护当前实现，每个模块独立中英文；不保留过渡方案、修复过程或评测报告 Markdown。
+核对日期：2026-10-15。仅维护当前实现，每个模块独立中英文；不保留过渡方案、修复过程或评测报告 Markdown。
 以下为统一入口，代码/机器 schema 与文档冲突时以代码为准，并同步修订双语版本。
 
 | 模块 | 中文 | English |
 | --- | --- | --- |
+| 完整处理流程（通俗详解） | [阅读](docs/zh-CN/processing-flow.md) | [Processing flow](docs/en/processing-flow.md) |
 | 整体架构 | [阅读](docs/zh-CN/architecture.md) | [Architecture](docs/en/architecture.md) |
 | Agent 与工具、Prompt | [阅读](docs/zh-CN/agent-tools.md) | [Agent, tools and prompts](docs/en/agent-tools.md) |
 | SEC、网页与检索 | [阅读](docs/zh-CN/sources-retrieval.md) | [SEC, web and retrieval](docs/en/sources-retrieval.md) |
@@ -85,7 +86,7 @@ tests/ eval/              测试、自建示例与评测 runner
 
 - 模型按需选择公司、财报和计算工具，避免回答前预取全部指标；Pydantic AI 提供结构化输出与有界重试。
 - SEC/XBRL 和财报原文为主要来源，SQLite 保存引用和精确定位；派生值保留公式及输入引用，发布前重放核验。
-- 回答整份校验通过后发布；问候走单独的对话字段，综合分析要求本轮保存 Markdown 报告和核验 XLSX。
+- 回答整份校验通过后发布；问候走单独的对话字段，Prompt 要求综合分析本轮保存 Markdown 报告和核验 XLSX；程序硬门槛目前主要覆盖显式报告/Excel 请求。
 - Decimal 保留完整计算精度，`compute_financial.display.text` 默认展示两位小数；USD 自动按百万/十亿缩放，后续计算仍用原始引用。
 - 单 FastAPI 进程、SQLite 和会话文件降低部署成本；不开放任意 Python/shell。财年辨识、语义核验和生产多用户能力仍有限。
 

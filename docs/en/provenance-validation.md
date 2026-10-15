@@ -2,7 +2,7 @@
 
 [中文](../zh-CN/provenance-validation.md) · [README](../../README.en.md)
 
-Verified against current implementation: 2026-10-14.
+Verified against current implementation: 2026-10-15.
 
 ## Data model and assurance levels
 
@@ -59,3 +59,7 @@ Answer body is published after complete validation; tool/status progress remains
 ## Presentation checks
 
 Financial claims with more than four decimal places are rejected before publication. The prompt normally requests two places, and `compute_financial.display.text` supplies a bounded rounded value. Numeric bindings still compare the displayed precision and monetary scale against the original registered value; evidence and computation records are unchanged. USD display places the currency before the amount (`USD 751.40 million`) so it matches the money parser. This is presentation validation, not proof of financial semantics.
+
+## Caveats versus claims
+
+`caveats` is parsed as a string array without claim-level source, numeric or causal checking. Report publication does not separately validate it either. A substantive financial assertion placed only in the yellow notices is not claim-validated. Normal publication and selected partial recovery paths also have different checking coverage; see the [complete processing flow](processing-flow.md).

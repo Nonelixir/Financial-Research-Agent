@@ -2,7 +2,7 @@
 
 [中文](../zh-CN/sessions-artifacts.md) · [README](../../README.en.md)
 
-Verified against current implementation: 2026-10-14.
+Verified against current implementation: 2026-10-15.
 
 ## Persistence and context
 
@@ -52,4 +52,4 @@ Conversational Answer.message is included in messages.content; it creates neithe
 
 ## Report delivery and presentation
 
-Broad analyses require a current-run saved Markdown report and verified XLSX before completion. Published reports follow the same numeric presentation and binding rules as answers: normally two decimal places, at most four, with readable USD scales. The display helper does not round the saved source values or workbook data. The workbook includes supported verified metrics and provenance, but may not include every narrative number or derived report ratio.
+The prompt requires broad analyses to save a current-run Markdown report and verified XLSX before completion; hard output gates primarily cover explicit report/Excel requests, not every implicit analysis. Published reports follow the same numeric presentation and binding rules as answers: normally two decimal places, at most four, with readable USD scales. The display helper does not round the saved source values or workbook data. The workbook includes supported verified metrics and provenance, but may not include every narrative number or derived report ratio.
